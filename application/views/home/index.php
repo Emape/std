@@ -25,7 +25,6 @@
     	                xhr.overrideMimeType('text/html; charset=UTF-8');
     	            },
     	        });
-
     	        var ajax_load = "<div style='text-align:center;padding-top:300px'> <button class='btn btn-lg btn-primary'><span class='glyphicon glyphicon-refresh glyphicon-refresh-animate'></span> Cargando...</button></div>";
     	        $(".ajaxmenu").on("click", function () {
     	            myUrl = $(this).attr('href');
@@ -45,8 +44,8 @@
                     );
     	            return false;
     	        });
-    	    });
-*/	</script>
+    	    });*/
+	</script>
     <style>
         .glyphicon-refresh-animate {
         -animation: spin .7s infinite linear;
@@ -61,28 +60,23 @@
         to { transform: scale(1) rotate(360deg);}
 	}
     </style>
-
 </head>
-<body class="skin-blue">
-    <a style="display:none" id="home" href="./home/principal.aspx" class="ajaxmenu"><i class="fa fa-circle-o"></i> Home</a>
-    <div class="wrapper">
 
+<body class="skin-blue">
+    <div class="wrapper">
       <!-- Main Header -->
       <header class="main-header">
-
         <!-- Logo -->
-        <a href="./Index.aspx" class="logo"><b>GEMA</b> </a>
+        <a href="./" class="logo"><b>GEMA</b> </a>
         <!-- Header Navbar -->
         <nav class="navbar navbar-static-top" role="navigation">
           <!-- Sidebar toggle button-->
           <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
             <span class="sr-only">Toggle navigation</span>
           </a>       
-                
-            <!-- Navbar Right Menu -->
+          <!-- Navbar Right Menu -->
           <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
-             
               <!-- User Account Menu -->
               <li class="dropdown user user-menu">
                 <!-- Menu Toggle Button -->
@@ -96,16 +90,10 @@
                   <!-- The user image in the menu -->
                   <li class="user-header">
                     <img src="./images/user.png" class="img-circle" alt="User Image" />
-                    <p>
-                       Smith Armijo
-                      <small>Código: 0050</small>
+                    <p>Smith Armijo<small>Código: 0050</small>
                     </p>
                   </li>
-               
                   <li class="user-footer">
-                    <!--<div class="pull-left">
-                      <a href="#" class="btn btn-default btn-flat">Profile</a>
-                    </div>-->
                     <div class="pull-right">
                       <a href="./login/Index.aspx" class="btn btn-default btn-flat"><i class="fa fa-power-off"></i> Salir</a>
                     </div>
@@ -116,57 +104,44 @@
           </div>
         </nav>
       </header>
+	  
       <!-- Left side column. contains the logo and sidebar -->
       <aside class="main-sidebar">
-
         <!-- sidebar: style can be found in sidebar.less -->
         <section class="sidebar">
-
           <!-- Sidebar Menu -->
-          <ul class="sidebar-menu">
+        <ul class="sidebar-menu">
             <li class="header"></li>
-			
             <li class="treeview">
-              <a href="#"><span>LOGÍSTICA</span> <i class="fa fa-angle-left pull-right"></i></a>
+              <a href="#"><span>TRÁMITE DOCUMENTARIO</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
-                <li><a href="#"><i class="fa fa-cube"></i><span>ALMACÉN</span> <i class="fa fa-angle-left pull-right"></i></a>
-				
+                <li><a href="#"><i class="fa fa-cube"></i><span> Doc. Internos</span> <i class="fa fa-angle-left pull-right"></i></a>
 			            <ul class="treeview-menu" style="padding-left: 0px;">
-                        <li><a id="opt_guiai" href="./home/guiaingreso.aspx" class="ajaxmenu"><i class="fa fa-sign-in"></i> Guía de Ingreso</a></li>
-						<li><a href="./home/guiasalida.aspx" class="ajaxmenu"><i class="fa fa-sign-out"></i> Guía de Salida</a></li>
-						<!--<li><a href="./home/transferencia.aspx" class="ajaxmenu"><i class="fa fa-sign-out"></i> Transferencia</a></li>-->
-						
+                        <li><a id="opt_guiai" href="./home/guiaingreso.aspx" class="ajaxmenu"><i class="fa fa-sign-in"></i> </a></li>
                         </ul>	
 		        </li>
-                
-                <li><a href="#"><i class="fa fa-archive"></i><span>REQUERIMIENTOS</span> <i class="fa fa-angle-left pull-right"></i></a>
-				
+                <li><a href="#"><i class="fa fa-archive"></i><span>Doc. Externos</span> <i class="fa fa-angle-left pull-right"></i></a>
 			            <ul class="treeview-menu" style="padding-left: 0px;">
                         <li><a id="opt_guiai" href="./home/requerimientoalm.aspx" class="ajaxmenu"><i class="fa fa-cubes"></i> Almacén</a></li>
                         </ul>	
 		        </li>
-
-                  <li><a href="#"><i class="fa fa-file-text-o"></i><span>REPORTES</span> <i class="fa fa-angle-left pull-right"></i></a>
+                <li><a href="#"><i class="fa fa-file-text-o"></i><span>REPORTES</span> <i class="fa fa-angle-left pull-right"></i></a>
 			            <ul class="treeview-menu" style="padding-left: 0px;">
-                        <li><a id="A4" href="RepMovAlmacen.aspx" class="ajaxmenu"><i class="fa fa-random"></i> Mov. de Almacén</a></li>
-                        <li><a id="A6" href="RepKardex.aspx" class="ajaxmenu"><i class="fa fa-cube"></i> Kardex</a></li>
-                        <li><a id="A7" href="RepStock.aspx" class="ajaxmenu"><i class="fa fa-cubes"></i> Stock</a></li>
+                        <li><a id="A4" href="RepMovAlmacen.aspx" class="ajaxmenu"><i class="fa fa-random"></i> Movimientos</a></li>
+                        <li><a id="A6" href="RepKardex.aspx" class="ajaxmenu"><i class="fa fa-cube"></i> Flujo</a></li>
                         </ul>	
 		        </li>
-                
               </ul>
             </li>
-
-          </ul><!-- /.sidebar-menu -->
+		</ul><!-- /.sidebar-menu -->
         </section>
         <!-- /.sidebar -->
       </aside>
 
       <!-- Content Wrapper. Contains page content -->
 	<div class="content-wrapper">
-	  <div id="container-ajax">
-	  </div>
-     </div><!-- ./wrapper -->
+	  <div id="container-ajax"></div>
+    </div><!-- ./wrapper -->
     
     <!-- jQuery 2.1.3 -->
     <script src="./library/plugins/jQuery/jQuery-2.1.3.min.js"></script>
