@@ -14,12 +14,12 @@
     
     <link href="./css/font-awesome.min.css"                             rel="stylesheet" type="text/css" />
     <link href="./css/ionicons.min.css"                                 rel="stylesheet" type="text/css" />
-    
+
     <script src="./js/jquery.js"                    type="text/javascript"></script>
     <script src="./js/custom_jquery.js"             type="text/javascript"></script>
     <script src="./js/jquery/jquery-1.4.1.min.js"   type="text/javascript"></script>
     <script src="./js/menu_jquery.js"               type="text/javascript"></script>
-    
+        
     <script>
     	    jQuery.noConflict();
     	    $(document).ready(function () {
@@ -90,12 +90,15 @@
         font: normal 11px tahoma, arial,verdana;
         color:#2E37AB;
         }
+        input{
+        text-transform:uppercase;
+        }
         
     </style>
     
 </head>
 
-<body class="skin-blue" oncontextmenu='return false' onkeydown='return false' >
+<body class="skin-blue" oncontextmenu='return false'>
     <div class="wrapper">
       <!-- Main Header -->
     <header class="main-header">

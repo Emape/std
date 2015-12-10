@@ -1,8 +1,51 @@
+<script>
+    $(document).ready(function(){
+        //fecha por defecto
+        var f = new Date();
+        var dia, mes;
+        if(f.getDate()<10) dia="0"+f.getDate(); else dia=f.getDate();
+        if(f.getMonth()<10) mes="0"+(f.getMonth()+1); else mes=(f.getMonth()+1);
+       
+        var fecha_def_ini= "01/"+mes+ "/" + f.getFullYear();
+        var fecha_def_fin= dia+"/"+mes+ "/" + f.getFullYear();
+        
+        $("#fecha_ini").val(fecha_def_ini);
+        $("#fecha_fin").val(fecha_def_fin);
+        
+        //crear calendario
+        $('#fecha_ini_icon').datepicker({
+            format: 'dd/mm/yyyy',
+            autoclose:true
+        });
+        $('#fecha_fin_icon').datepicker({
+            format: 'dd/mm/yyyy',
+            autoclose:true
+        });
+    });
+    
+    $('.btn-toggle').click(function() {
+        $(this).find('.btn').toggleClass('active');  
+        if ($(this).find('.btn-primary').size()>0) {
+    	$(this).find('.btn').toggleClass('btn-primary');
+        }
+        $(this).find('.btn').toggleClass('btn-default'); 
+});
+
+</script>
 <section class="content-header">
     <div class="row">
-       	<div class="col-xs-5 col-sm-6 col-md-8 col-lg-8"><span style="font-size:18px;font-weight:bold">Documentos</span></div>
+       	<div class="col-xs-5 col-sm-6 col-md-8 col-lg-8"><span style="font-size:18px;font-weight:bold">Documentos </span>
+        <div class="btn-group btn-toggle" data-toggle="buttons">
+    <label class="btn btn-primary active">
+      <input type="radio" name="options" value="option1"> Internos
+    </label>
+    <label class="btn btn-default">
+      <input type="radio" name="options" value="option2" checked=""> Externos
+    </label>
+  </div>
+        </div>
             <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4" align="right">
-                <span class="btn btn-primary" title="Agregar"   style="font-size:12px" data-toggle="modal" data-target="#guiaiInsertModal" onclick="limpiar()">
+                <span class="btn btn-primary" title="Agregar"   style="font-size:12px;" data-toggle="modal" data-target="#guiaiInsertModal" onclick="limpiar()">
                     <i  class="fa fa-plus" ></i> 
                 </span>
                 <span class="btn btn-primary" title="Modificar" style="font-size:12px" data-toggle="modal" data-target="#guiaiInsertModal" onclick="limpiar()">
@@ -28,69 +71,59 @@
             <div class="box box-primary">
                 <div class="box-header">
                     <div class="row">
-			<div class="col-xs-2">
+                        <div class="col-xs-12 col-sm-6 col-md-2 col-lg-5">
+                            <div class="form-group">
+                                <label>Concepto</label>
+                                <div class='input-group date'>
+                                <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-search"></span>
+                                </span>
+                                <input type='text' name="search" id="search"  class="form-control" />
+                                
+                                </div>
+                            </div>
+                            
+                            
+                            
+                           
+                            
+                        </div>
+                        
+                        <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">
                             <div class="dataTables_length">
-                                <input type=text name="search" id="search" aria-controls="tabla_inventario" class="form-control input-sm"> 
                             </div>
                         </div>
-			<div class="col-xs-2">
-                            <div class="dataTables_length">
-                                 <input type=text name="search" id="search" aria-controls="tabla_inventario" class="form-control input-sm"> 
+			<div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">
+                            <div class="form-group">
+                                <label>Fecha Inicial</label>
+                                <div class='input-group date' id="fecha_ini_icon">
+                                <input type='text' name="fecha_ini" id="fecha_ini"  class="form-control" />
+                                <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                                </div>
                             </div>
                         </div>
-			<div class="col-xs-2">
-                            <div class="dataTables_length">
-                                <input type=text name="search" id="search" aria-controls="tabla_inventario" class="form-control input-sm"> 
+			<div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">
+                            <div class="form-group">
+                                <label>Fecha Final</label>
+                                <div class='input-group date' id="fecha_fin_icon">
+                                <input type='text' name="fecha_fin" id="fecha_fin"  class="form-control" />
+                                <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                                </div>
                             </div>
                         </div>
-			<div class="col-xs-2">
+                        <div class="col-xs-12 col-sm-6 col-md-1 col-lg-1">
+                           
                             <div class="dataTables_length">
-                                 <input type=text name="search" id="search" aria-controls="tabla_inventario" class="form-control input-sm"> 
+                                 <span class="btn btn-primary" title="Buscar" id="imprimir" style="font-size:12px;margin-top:22px" onclick="imprimir_pdf()">
+                    <i class="fa fa-search" ></i> 
+                </span>
                             </div>
                         </div>
-                        <div class="col-xs-2">
-                            <div class="dataTables_length">
-                                <input type=text name="search" id="search" aria-controls="tabla_inventario" class="form-control input-sm"> 
-                            </div>
-                        </div>
-			<div class="col-xs-2">
-                            <div class="dataTables_length">
-                                 <input type=text name="search" id="search" aria-controls="tabla_inventario" class="form-control input-sm"> 
-                            </div>
-                        </div>
-                    </div>
-                    <br>
-                    <div class="row">
-			<div class="col-xs-2">
-                            <div class="dataTables_length">
-                                <input type=text name="search" id="search" aria-controls="tabla_inventario" class="form-control input-sm"> 
-                            </div>
-                        </div>
-			<div class="col-xs-2">
-                            <div class="dataTables_length">
-                                 <input type=text name="search" id="search" aria-controls="tabla_inventario" class="form-control input-sm"> 
-                            </div>
-                        </div>
-			<div class="col-xs-2">
-                            <div class="dataTables_length">
-                                <input type=text name="search" id="search" aria-controls="tabla_inventario" class="form-control input-sm"> 
-                            </div>
-                        </div>
-			<div class="col-xs-2">
-                            <div class="dataTables_length">
-                                 <input type=text name="search" id="search" aria-controls="tabla_inventario" class="form-control input-sm"> 
-                            </div>
-                        </div>
-                        <div class="col-xs-2">
-                            <div class="dataTables_length">
-                                <input type=text name="search" id="search" aria-controls="tabla_inventario" class="form-control input-sm"> 
-                            </div>
-                        </div>
-			<div class="col-xs-2">
-                            <div class="dataTables_length">
-                                 <input type=text name="search" id="search" aria-controls="tabla_inventario" class="form-control input-sm"> 
-                            </div>
-                        </div>
+			
                     </div>	
                 </div>
                 <div class="box-body pad table-responsive" style="overflow:scroll;height:350px" >
@@ -162,6 +195,9 @@
                                     <span class="btn btn-success" title="Anular"    id="anular"  style="font-size:12px" data-toggle="modal" data-target="#confirm-delete" >
                                     <i  class="fa fa-minus-circle" ></i> 
                                     </span>
+                                    <span class="btn btn-success" title="Imprimir"    id="imprimir"  style="font-size:12px" data-toggle="modal" data-target="#confirm-delete" >
+                                    <i  class="fa fa-download" ></i> 
+                                    </span>
                                 </div>
                         </div>
                     </section>
@@ -225,4 +261,4 @@
         </div>
     </div>
 </section><!-- /.content -->
-<script src="../js/jquery.uitablefilter.js" ></script>
+<!--<script src="../js/jquery.uitablefilter.js" ></script>-->
