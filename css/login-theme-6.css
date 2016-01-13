@@ -1,0 +1,379 @@
+/* ==========================================================================
+   Login Box styles
+   ========================================================================== */
+  
+ 
+body{
+	background:#222D3A;
+	color: #888;
+}
+
+#enviar a:hover {
+  color: #ffe100;
+}
+
+.alert{
+	margin: 20px auto;
+	width: 70%;
+}
+#login-block{	 
+	padding-top: 50px;
+	padding-bottom: 25px;
+}
+#login-block h3{
+	color: #FFF;
+	text-align: center;
+	font-size:1.5em;
+	 opacity: 0.8;
+	text-shadow: 2px 2px 2px #000;
+	font-weight: normal;
+ 
+}
+
+.login-box{
+	position: relative;
+	max-width:480px;	
+	background: #E2E2E2;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius:3px;
+	padding-bottom: 20px; 
+	margin-top: 80px; 
+}
+
+.login-logo{
+	 text-align: center;
+	 padding: 40px 0px 0px;
+}
+
+.login-logo img{
+	border:0;
+	display: inline-block;
+}
+.login-form form p{
+	width:80%;
+	margin: 5px auto 10px;
+	text-align: center;
+}
+ 
+
+.login-box hr{
+	margin:10px auto 20px;
+	width:70%;
+	border-top: 1px solid rgba(0, 0, 0, 0.13);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.15)
+}
+/* page icon */
+.page-icon{
+	width: 100px;
+	height:100px;
+	-webkit-border-radius: 100px;
+	-moz-border-radius: 100px;
+	border-radius: 100px;
+	background: #c0392b;
+	text-align: center; 
+	margin: -60px auto 0;
+	
+}
+.page-icon img{
+	vertical-align: middle; 
+	margin: 25px 25px 0;
+	-moz-transition: all .5s ease-in-out;
+	-webkit-transition: all .5s ease-in-out;
+	-o-transition: all .5s ease-in-out;
+	-ms-transition: all .5s ease-in-out;
+	transition: all .5s ease-in-out;
+	
+	width:48px;
+	height:48px;
+	 
+}
+.rotate-icon{
+	 -moz-transform:rotate(45deg);
+	-webkit-transform:rotate(45deg);
+	-o-transform:rotate(45deg);
+	-ms-transform:rotate(45deg);
+	transform: rotate(45deg);
+}
+.login-box .page-icon{
+	-webkit-animation-delay: .8s;
+	-moz-animation-delay: .8s;
+	-o-animation-delay: .8s;
+	animation-delay: .8s;
+}
+/* Login Form */
+.login-form input{
+	display: block;
+	margin:0 auto 15px;
+	width:70%;
+	background: #fefefe;
+	border:0;
+	color:#6c6c6c;
+	padding: 8px;
+	border-radius:2px;
+	
+}
+
+/* Login Button */
+.btn.btn-login {
+	width: 120px;
+	display:block;
+	margin: 20px auto 20px;
+	color: white;
+	text-transform:uppercase ;	 
+	background: #16236E; 
+	-webkit-transition: all .5s ease-in-out;
+	-moz-transition: all .5s ease-in-out;
+	-o-transition: all .5s ease-in-out;
+	transition: all .5s ease-in-out;
+	
+}
+.btn.btn-login:hover {	 
+	color: #ffe100;
+} 
+.btn.btn-reset{
+	width: 180px;
+}
+.login-links{
+	text-align: center;
+}
+.login-links a{
+	color: #FFF; 
+	display:inline-block;
+	padding:5px; 
+	-webkit-transition: all .5s ease;
+	-moz-transition: all .5s ease;
+	-ms-transition: all .5s ease;
+	-o-transition: all .5s ease;
+	transition: all .5s ease;
+	opacity: 0.7;
+}
+.login-links a:hover{
+	 opacity: 1;
+	 text-decoration: none;
+}
+
+label.checkbox {
+	width: 70%;
+	display: block;
+	margin: 0 auto;
+}
+label.checkbox input{
+	width:14px;
+	margin: 4px 0 0;
+	padding: 0;
+	background: none;
+	border: 0;
+}
+#footer-text, #footer-text a{
+	text-align: center;
+	color:#FFF;
+	color: rgba(255, 255, 255, 0.33);
+	opacity: 1; 
+}
+
+/* Social Login */
+.social-login{
+	margin:10px 0 5px;
+}
+.social-login .btn{ 
+   text-align: center;
+    margin: 5px auto;
+    color:#FFF;
+    text-shadow: 1px 1px 1px #333;
+    width:95%;
+}
+ 
+.btn.btn-facebook {
+	border: 1px solid #2D4479;
+	 
+	background: #385496;
+	background-size: 100%; 
+	font-size:12px;
+}
+.btn.btn-facebook:hover {
+	background: #4365B4;
+	 
+}
+
+.btn.btn-twitter {
+	border: 1px solid #2189FF; 
+	background: #4A9EFF; 
+	font-size:12px;
+}
+
+.btn.btn-twitter:hover {
+	background: #73B4FF; 
+}
+.fb-login, .twit-login{
+	-webkit-animation-delay: .9s;
+	-moz-animation-delay: .9s;
+	-o-animation-delay: .9s;
+	animation-delay: .9s;
+}
+
+/* For Long Shadow 
+=================================================================== */  
+
+.page-icon {
+	 
+	overflow: hidden; 
+	box-shadow: rgba(29, 38, 49, 0.02) 1px 1px, 
+	rgba(29, 38, 49, 0.02) 2px 2px, 
+	rgba(29, 38, 49, 0.02) 3px 3px, 
+	rgba(29, 38, 49, 0.02) 4px 4px, 
+	rgba(29, 38, 49, 0.02) 5px 5px, 
+	rgba(29, 38, 49, 0.02) 6px 6px, 
+	rgba(29, 38, 49, 0.02) 7px 7px, 
+	rgba(29, 38, 49, 0.02) 8px 8px, 
+	rgba(29, 38, 49, 0.02) 9px 9px, 
+	rgba(29, 38, 49, 0.02) 10px 10px, 
+	rgba(29, 38, 49, 0.02) 11px 11px, 
+	rgba(29, 38, 49, 0.02) 12px 12px, 
+	rgba(29, 38, 49, 0.02) 13px 13px, 
+	rgba(29, 38, 49, 0.02) 14px 14px, 
+	rgba(29, 38, 49, 0.02) 15px 15px, 
+	rgba(29, 38, 49, 0.02) 16px 16px, 
+	rgba(29, 38, 49, 0.02) 17px 17px, 
+	rgba(29, 38, 49, 0.02) 18px 18px, 
+	rgba(29, 38, 49, 0.02) 19px 19px, 
+	rgba(29, 38, 49, 0.02) 20px 20px,
+	rgba(29, 38, 49, 0.02) 21px 21px,
+	rgba(29, 38, 49, 0.02) 22px 22px,
+	rgba(29, 38, 49, 0.02) 23px 23px,
+	rgba(29, 38, 49, 0.02) 24px 24px,
+	rgba(29, 38, 49, 0.02) 25px 25px, 
+	rgba(29, 38, 49, 0.018) 26px 26px, 
+	rgba(29, 38, 49, 0.015) 27px 27px,
+	rgba(29, 38, 49, 0.015) 28px 28px, 
+	rgba(29, 38, 49, 0.014) 29px 29px, 
+	rgba(29, 38, 49, 0.014) 30px 30px, 
+	rgba(29, 38, 49, 0.012) 31px 31px, 
+	rgba(29, 38, 49, 0.012) 32px 32px, 
+	rgba(29, 38, 49, 0.01) 33px 33px, 
+	rgba(29, 38, 49, 0.01) 34px 34px, 
+	rgba(29, 38, 49, 0.01) 35px 35px,
+	rgba(29, 38, 49, 0.01) 44px 44px,
+	rgba(29, 38, 49, 0.01) 48px 48px,
+	rgba(29, 38, 49, 0.01) 52px 52px,
+	rgba(29, 38, 49, 0.01) 56px 56px,
+	rgba(29, 38, 49, 0.01) 60px 60px;
+}
+/* Logn Shadow Style */
+.login-box{
+	box-shadow: rgb(29, 38, 49) 15px 15px 10px ;
+}
+
+
+.page-icon-shadow { 
+	width: 100px;
+	height:100px;
+	-webkit-border-radius: 100px;
+	-moz-border-radius: 100px;
+	border-radius: 100px;
+	background: transparent;
+	text-align: center; 
+	margin: -60px auto 0;
+	background: transparent;
+	-webkit-animation-delay: 0.8s;
+	-moz-animation-delay: 0.8s;
+	-o-animation-delay: 0.8s;
+	animation-delay: 0.8s;	
+	bottom: -118px;
+	position: relative;
+	box-shadow: rgb(29, 38, 49) 1px 1px,
+    rgb(29, 38, 49) 2px 2px,
+    rgb(29, 38, 49) 3px 3px,
+    rgb(29, 38, 49) 4px 4px,
+    rgb(29, 38, 49) 5px 5px,
+    rgb(29, 38, 49) 6px 6px,
+    rgb(29, 38, 49) 7px 7px,
+    rgb(29, 38, 49) 8px 8px,
+    rgb(29, 38, 49) 9px 9px,
+    rgb(29, 38, 49) 10px 10px,
+    rgb(29, 38, 49) 11px 11px,
+    rgb(29, 38, 49) 12px 12px,
+    rgb(29, 38, 49) 13px 13px,
+    rgb(29, 38, 49) 14px 14px,
+    rgb(29, 38, 49) 15px 15px,
+    rgb(29, 38, 49) 16px 16px,
+    rgb(29, 38, 49) 17px 17px,
+    rgb(29, 38, 49) 18px 18px,
+    rgb(29, 38, 49) 19px 19px,
+    rgb(29, 38, 49) 20px 20px,
+    rgb(29, 38, 49) 21px 21px,
+    rgb(29, 38, 49) 22px 22px,
+    rgb(29, 38, 49) 23px 23px,
+    rgb(29, 38, 49) 24px 24px,
+    rgb(29, 38, 49) 25px 25px,
+    rgb(29, 38, 49) 26px 26px,
+    rgb(29, 38, 49) 27px 27px,
+    rgb(29, 38, 49) 28px 28px,
+    rgb(29, 38, 49) 29px 29px,
+    rgb(29, 38, 49) 30px 30px,
+    rgb(29, 38, 49) 31px 31px,
+    rgb(29, 38, 49) 32px 32px,
+    rgb(29, 38, 49) 33px 33px,
+    rgb(29, 38, 49) 34px 34px,
+    rgb(29, 38, 49) 35px 35px,
+    rgb(29, 38, 49) 36px 36px,
+    rgb(29, 38, 49) 37px 37px,
+    rgb(29, 38, 49) 38px 38px,
+    rgb(29, 38, 49) 39px 39px,
+    rgb(29, 38, 49) 40px 40px,
+    rgb(29, 38, 49) 41px 41px,
+    rgb(29, 38, 49) 42px 42px,
+    rgb(29, 38, 49) 43px 43px,
+    rgb(29, 38, 49) 44px 44px,
+    rgb(29, 38, 49) 45px 45px,
+    rgb(29, 38, 49) 46px 46px,
+    rgb(29, 38, 49) 47px 47px,
+    rgb(29, 38, 49) 48px 48px,
+    rgb(29, 38, 49) 49px 49px,
+    rgb(29, 38, 49) 50px 50px;
+}  
+.page-icon .glyphicon{
+	font-size: 3em;
+	line-height: 2.3em;
+	text-shadow: rgb(156, 46, 34) 1px 1px,
+    rgb(158, 47, 35) 2px 2px,
+    rgb(161, 48, 35) 3px 3px,
+    rgb(163, 48, 36) 4px 4px,
+    rgb(165, 49, 36) 5px 5px,
+    rgb(168, 50, 37) 6px 6px,
+    rgb(170, 50, 37) 7px 7px,
+    rgb(173, 51, 38) 8px 8px,
+    rgb(175, 52, 39) 9px 9px,
+    rgb(177, 52, 39) 10px 10px,
+    rgb(180, 53, 40) 11px 11px,
+    rgb(182, 54, 40) 12px 12px,
+    rgb(184, 54, 41) 13px 13px,
+    rgb(187, 55, 41) 14px 14px,
+    rgb(189, 56, 42) 15px 15px; 
+}
+
+#footer-text{
+	position: relative;
+}
+ 
+/* Mobile Portrait Size to Mobile Landscape Size (devices and browsers)
+=================================================================== */
+@media only screen and (max-width: 479px) {
+	#login-block{	 
+		padding-top: 10px;
+		padding-bottom: 25px;
+	}
+	
+}
+
+/* Tablet Portrait Size to Tablet Landscape Size (devices and browsers)
+=================================================================== */
+@media only screen and (min-width: 480px) and (max-width: 767px){
+	#login-block {	 
+		margin: 0 auto;
+		width: 420px;
+	}
+	
+}
+
+

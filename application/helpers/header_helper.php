@@ -4,26 +4,28 @@
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>EMAPE S.A.</title>
-    <link rel="shortcut icon" href="./images/favicon.ico">
+    <link href="<?php base_url()?>images/favicon.ico"                                   rel="shortcut icon">
     
-    <link href="./library/bootstrap/css/bootstrap.min.css"              rel="stylesheet" type="text/css" />
-    <link href="./library/plugins/datatables/dataTables.bootstrap.css"  rel="stylesheet" type="text/css" />
-    <link href="./library/dist/css/AdminLTE.min.css"                    rel="stylesheet" type="text/css" />
-    <link href="./library/dist/css/skins/_all-skins.min.css"            rel="stylesheet" type="text/css" />
-    <link href="./library/plugins/datepicker/bootstrap-datepicker3.css" rel="stylesheet" type="text/css" />
-    
-    <link href="./css/font-awesome.min.css"                             rel="stylesheet" type="text/css" />
-    <link href="./css/ionicons.min.css"                                 rel="stylesheet" type="text/css" />
+    <link href="<?php base_url()?>library/bootstrap/css/bootstrap.min.css"              rel="stylesheet" type="text/css" />
 
-    <script src="./js/jquery.js"                    type="text/javascript"></script>
-    <script src="./js/custom_jquery.js"             type="text/javascript"></script>
-    <script src="./js/jquery/jquery-1.4.1.min.js"   type="text/javascript"></script>
-    <script src="./js/menu_jquery.js"               type="text/javascript"></script>
-    <script src="./js/ckeditor.js"     type="text/javascript"></script>
+    <link href="<?php base_url()?>library/plugins/datatables/dataTables.bootstrap.css"  rel="stylesheet" type="text/css" />
+    <link href="<?php base_url()?>library/dist/css/AdminLTE.min.css"                    rel="stylesheet" type="text/css" />
+    <link href="<?php base_url()?>library/dist/css/skins/_all-skins.min.css"            rel="stylesheet" type="text/css" />
+    <link href="<?php base_url()?>library/plugins/datepicker/bootstrap-datepicker3.css" rel="stylesheet" type="text/css" />
+    
+    <link href="<?php base_url()?>css/font-awesome.min.css"                             rel="stylesheet" type="text/css" />
+    <link href="<?php base_url()?>css/ionicons.min.css"                                 rel="stylesheet" type="text/css" />
+    <link href="<?php base_url()?>library/plugins/select2/select2.min.css"                                  rel="stylesheet" type="text/css" />
+    
+    <script src="<?php base_url()?>js/jQuery-2.1.4.min.js"                    type="text/javascript"></script>
+    <script src="<?php base_url()?>js/custom_jquery.js"             type="text/javascript"></script>
+    <script src="<?php base_url()?>js/jquery/jquery-1.4.1.min.js"   type="text/javascript"></script>
+    <script src="<?php base_url()?>js/menu_jquery.js"               type="text/javascript"></script>
+    <script src="<?php base_url()?>js/ckeditor.js"                  type="text/javascript"></script>  
     
     <script>
     	    jQuery.noConflict();
-    	    $(document).ready(function () {
+    	    $(document).ready(function(){
     	        $.ajaxSetup({
     	            'beforeSend': function (xhr) {
     	                xhr.overrideMimeType('text/html; charset=UTF-8');
@@ -47,11 +49,26 @@
     	            }
                     );
     	            return false;
-    	        });
-    	    });
+    	        });   
+        });
     </script>
     
     <style>
+        .alert{padding:14px 35px 14px 14px;margin-bottom:20px;background-color:#fcf8e3;border-radius: 0px;}
+        .alert{color:#c09853;text-align: center}
+        .alerta-success {color: #3c763d;background-color: #dff0d8;border-color: #d6e9c6;}
+        .alerta-info {color: #31708f;background-color: #d9edf7;border-color: #bce8f1;}
+        .alerta-warning {color: #8a6d3b;background-color: #fcf8e3;border-color: #faebcc;}
+        .alerta-danger {color: #a94442;background-color: #f2dede;border-color: #ebccd1;}
+        
+        .fade {
+        opacity: 0;
+        -webkit-transition: opacity 0.15s linear;
+        -moz-transition: opacity 0.15s linear;
+        -o-transition: opacity 0.15s linear;
+        transition: opacity 0.15s linear;
+        }
+                
         .glyphicon-refresh-animate {
         -animation: spin .7s infinite linear;
         -webkit-animation: spin2 .7s infinite linear;
@@ -95,7 +112,7 @@
         text-transform:uppercase;
         }
         #cke_1_contents{
-        height:400px !important;
+        height:300px !important;
         }
         #cke_2_contents{
         height:300px !important;
@@ -163,12 +180,22 @@
         .tree li a:hover+ul ul::before{
 	border-color:  #94a0b4;
         }
+        
+        tr.highlighted td {
+        background-color: rgb(102, 153, 204);
+        color:#FFFFFF;
+        }
 </style>
         
     </style>
 </head>
 
 <body class="skin-blue" oncontextmenu='return false'>
+    <div id="alert-green"   style="position:fixed;z-index:1100;width:100%;display:none" data-alert="" class="alert alerta-success fade in"><i class="fa fa-check-circle"></i> <span id="texto-green"></span></div>
+    <div id="alert-blue"    style="position:fixed;z-index:1100;width:100%;display:none" data-alert="" class="alert alerta-info fade in"><i class="fa fa-info-circle"></i> <span id="texto-blue"></span></div>
+    <div id="alert-red"     style="position:fixed;z-index:1100;width:100%;display:none" data-alert="" class="alert alerta-danger fade in"><i class="fa fa-times-circle"></i> <span id="texto-red"></span></div>
+    <div id="alert-yellow"  style="position:fixed;z-index:1100;width:100%;display:none" data-alert="" class="alert alerta-warning fade in"><i class="fa fa-warning"></i> <span id="texto-yellow"></span></div>
+   
     <div class="wrapper">
       <!-- Main Header -->
     <header class="main-header">
@@ -188,20 +215,20 @@
                 <!-- Menu Toggle Button -->
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <!-- The user image in the navbar-->
-                  <img src="./images/user.png" class="user-image" alt="User Image"/>
+                  <img src="<?php base_url()?>images/user.png" class="user-image" alt="User Image"/>
                   <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                  <span class="hidden-xs">Roger Armijo</span>
+                  <span class="hidden-xs"><?php echo "Bienvenido ".$_SESSION['nombre'];?></span>
                 </a>
                 <ul class="dropdown-menu">
                   <!-- The user image in the menu -->
                   <li class="user-header">
-                    <img src="./images/user.png" class="img-circle" alt="User Image" />
-                    <p>Roger Armijo<small>Código: 0050</small>
+                    <img src="<?php base_url()?>images/user.png" class="img-circle" alt="User Image" />
+                    <p><?php echo $_SESSION['nombre'].' '.$_SESSION['apellidoPaterno'].' '.$_SESSION['apellidoMaterno'];?><small>Código: <?php echo str_pad($_SESSION['codigo'], 6, '0', STR_PAD_LEFT);?></small>
                     </p>
                   </li>
                   <li class="user-footer">
                     <div class="pull-right">
-                      <a href="./login/Index.aspx" class="btn btn-default btn-flat"><i class="fa fa-power-off"></i> Salir</a>
+                      <a href="./acceso/cerrar_sesion" class="btn btn-default btn-flat"><i class="fa fa-power-off"></i> Salir</a>
                     </div>
                   </li>
                 </ul>
@@ -218,15 +245,53 @@
           <!-- Sidebar Menu -->
             <ul class="sidebar-menu">
                 <li class="header"></li>
-                <li class="treeview">
-                <a href="#"><span>TRÁMITE DOCUMENTARIO</span> <i class="fa fa-angle-left pull-right"></i></a>
+
+                <?php if(in_array('1',$_SESSION['cMenu'])){?>
+                <li class="treeview">  
+                <a href="#"><span>ADMINISTRACIÓN</span> <i class="fa fa-angle-left pull-right"></i></a>
                 <ul class="treeview-menu">
-                <li><a href="./documento/index" class="ajaxmenu"><i class="fa fa-book"></i><span> Documentos</span> 
-                        
+                <li><a href="./documento/index" class="ajaxmenu"><i class="fa fa-user"></i><span> Usuarios</span>  
+                </a>	      
+		</li>
+                </ul>    
+                </li>
+                <?php } if(in_array('2',$_SESSION['cMenu'])){?>                
+                <li class="treeview">    
+                <a href="#"><span>TRÁMITE DOCUMENTARIO</span> <i class="fa fa-angle-left pull-right"></i></a>
+                    <?php if(in_array('5',$_SESSION['cSubmenu'])){?>
+                    <ul class="treeview-menu">  
+                    <li><a href="./documento/index" class="ajaxmenu"><i class="fa fa-book"></i><span> Documentos</span>  
                     </a>	      
+                    </li>
+                    </ul>
+                    <?php } ?>
+                </li>
+                <?php } if(in_array('3',$_SESSION['cMenu'])){?>  
+                <li class="treeview">
+                <a href="#"><span>LEGAL</span> <i class="fa fa-angle-left pull-right"></i></a>
+                <ul class="treeview-menu">
+                <li><a href="./documento/index" class="ajaxmenu"><i class="fa fa-legal"></i><span> Expedientes</span>  
+                </a>	      
 		</li>
                 </ul>
                 </li>
+                <?php } if(in_array('4',$_SESSION['cMenu'])){?>  
+                <li class="treeview">
+                <a href="#"><span>ARCHIVO</span> <i class="fa fa-angle-left pull-right"></i></a>
+                <ul class="treeview-menu">
+                <li><a href="./documento/index" class="ajaxmenu"><i class="fa fa-cubes"></i><span> Inventario</span>  
+                </a>	      
+		</li>
+                <li><a href="./documento/index" class="ajaxmenu"><i class="fa fa-hand-o-up"></i><span> Solicitud</span>  
+                </a>	      
+		</li>
+                <li><a href="./documento/index" class="ajaxmenu"><i class="fa fa-file"></i><span> Reportes</span>  
+                </a>	      
+		</li>
+                </ul>
+                </li>
+                <?php }?>  
+                
             </ul><!-- /.sidebar-menu -->
         </section>
         <!-- /.sidebar -->
