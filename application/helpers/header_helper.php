@@ -266,6 +266,19 @@
                     </ul>
                     <?php } ?>
                 </li>
+                
+                <?php } if(in_array('21',$_SESSION['cMenu'])){?>                
+                <li class="treeview">    
+                <a href="#"><span>PERSONAL</span> <i class="fa fa-angle-left pull-right"></i></a>
+                    <?php if(in_array('22',$_SESSION['cSubmenu'])){?>
+                    <ul class="treeview-menu">  
+                    <li><a href="./personal/control" class="ajaxmenu"><i class="fa fa-child"></i><span> Asistencia de Locadores</span>  
+                    </a>	      
+                    </li>
+                    </ul>
+                    <?php } ?>
+                </li>
+                
                 <?php } if(in_array('3',$_SESSION['cMenu'])){?>  
                 <li class="treeview">
                 <a href="#"><span>LEGAL</span> <i class="fa fa-angle-left pull-right"></i></a>

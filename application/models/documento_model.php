@@ -33,7 +33,7 @@ class documento_model extends CI_Model{
         $this->db_1->where('d.estado','1');
 	$this->db_1->where('e.estado','1');
         $this->db_1->where('t.estado','1');
-        $this->db_1->order_by('d.nroTramite','desc');
+        $this->db_1->order_by('d.pkDocumento','desc');
         
         $query = $this->db_1->get();
         
@@ -124,15 +124,14 @@ class documento_model extends CI_Model{
         $this->db_1->insert($this->table_1, $data); 
         $id=$this->db_1->insert_id();
         
-        $this->db_1->select('*');
+        $this->db_1->select('MAX(CONVERT(RIGHT(nroTramite,6),UNSIGNED INTEGER)) AS ultimo');
         $this->db_1->from($this->table_1.' d');
         $this->db_1->where('d.fechaDocumento>=',date("Y")."-01-01");
         $this->db_1->where('d.dependenciaCreador',$_SESSION['pkDependencia']);
         $this->db_1->where('d.estado','1');
 
         $query = $this->db_1->get();
-        $contar=$query->num_rows();
-        //echo $contar;die;
+        $contar=$query->row()->ultimo;
         $datau = array('nroTramite' => date("Y").$_SESSION['sigla'].str_pad(($contar), '6', '0', STR_PAD_LEFT));
         $this->db_1->where('pkDocumento', $id);
         $this->db_1->update($this->table_1, $datau);
