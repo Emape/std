@@ -85,7 +85,7 @@ class documento_model extends CI_Model{
         $this->db_1->where('d.pkTipoDoc',$filter->tipo_doc);
         
         if(isset($filter->nrodoc)){$this->db_1->where('d.pkDocumento',$filter->nrodoc);}
-        if(isset($filter->flaguser)){$this->db_1->where('d.usuarioCreador',$_SESSION['usuario']);}
+        //if(isset($filter->flaguser)){$this->db_1->where('d.usuarioCreador',$_SESSION['usuario']);}
         
         $this->db_1->where('d.estado','1');
 	$this->db_1->where('e.estado','1');

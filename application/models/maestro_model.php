@@ -130,6 +130,7 @@ class maestro_model extends CI_Model{
                         'pkPersona' => $val,
                         'asistio' => $asistio,
                         'fecha' => $fecha,
+                        'pkDependencia' => $filter->pkDependencia,
                         'horaMinuto' => $filter->horaMinuto[$key],
                         'usuarioCreador' => $_SESSION['usuario'],
                         'usuarioModificador' => $_SESSION['usuario'],
@@ -141,11 +142,12 @@ class maestro_model extends CI_Model{
         }
     }
     
-    public function existeFecha($fecha){
+    public function existeFecha($fecha,$dependencia){
         $this->db_1->select('*');
         $this->db_1->from($this->table_5.' al');
         $this->db_1->where('al.estado','1');
         $this->db_1->where('al.fecha',$fecha);
+        $this->db_1->where('al.pkDependencia',$dependencia);
         $query = $this->db_1->get();
         
         $result = new stdclass();
@@ -167,6 +169,7 @@ class maestro_model extends CI_Model{
         $this->db_1->where('al.estado','1');
         $this->db_1->where('p.locador','1');
         $this->db_1->where('al.fecha',$filter->fecha);
+        $this->db_1->where('al.pkDependencia',$filter->pkDependencia);
         $this->db_1->order_by("p.apellidoPaterno", "asc");
         
         $query = $this->db_1->get();

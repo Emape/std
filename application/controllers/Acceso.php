@@ -52,7 +52,7 @@ class Acceso extends CI_Controller {
                    'apellidoMaterno'    => $acceso->apellidoMaterno,
                    'gerencia'           => $acceso->descripcion,
                    'sigla'              => $acceso->siglas,
-                   'pkDependencia'      => $acceso->pkDependencia,
+                   'pkDependencia'      => $acceso->unidadx,
                    'cMenu'              => $array1,
                    'cSubmenu'           => $array2,
                    'cSeccion'           => $array3,

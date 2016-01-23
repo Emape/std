@@ -232,18 +232,19 @@ class Documento extends CI_Controller {
         foreach($var as $key => $v ){
             $obj->setActiveSheetIndex(0)
                 ->setCellValue('A'.$i, ($i-8))
-                ->setCellValue('B'.$i, $v->tipo)
-                ->setCellValue('C'.$i, $v->nroTramite)
-                ->setCellValue('D'.$i, $v->dependencia)
-                ->setCellValue('E'.$i, date('d/m/Y',  strtotime($v->fechaCreada)))
-                ->setCellValue('F'.$i, strtoupper($v->asunto))
-                ->setCellValue('G'.$i, $v->dependenciaMovimiento)
-                ->setCellValue('H'.$i, $v->nroTramiteMovimiento)
-                ->setCellValue('I'.$i, (is_null($v->fechaMovimiento) ? "":date('d/m/Y',strtotime($v->fechaMovimiento))))
-                ->setCellValue('J'.$i, $v->estadoMovimiento);
+                ->setCellValue('B'.$i, $v->nroTramite)
+                ->setCellValue('C'.$i, date('d/m/Y',  strtotime($v->fechaCreada)))    
+                ->setCellValue('D'.$i, $v->tipo)
+                ->setCellValue('E'.$i, $v->nroDocumento)
+                ->setCellValue('F'.$i, $v->dependencia)
+                ->setCellValue('G'.$i, strtoupper($v->asunto))
+                ->setCellValue('H'.$i, $v->dependenciaMovimiento)
+                ->setCellValue('I'.$i, $v->nroTramiteMovimiento)
+                ->setCellValue('J'.$i, (is_null($v->fechaMovimiento) ? "":date('d/m/Y',strtotime($v->fechaMovimiento))))
+                ->setCellValue('K'.$i, $v->estadoMovimiento);
             $i=$i+1;
         }
-        $obj->getActiveSheet()->getStyle('A9:J'.($i-1))->applyFromArray($style_border);
+        $obj->getActiveSheet()->getStyle('A9:K'.($i-1))->applyFromArray($style_border);
         //prepare download
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="tramite_documentario.xls"');

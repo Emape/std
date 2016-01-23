@@ -749,7 +749,12 @@
                   
             $('#form_movimiento #responsable').append($('<option>', { value: "0",text : "Seleccionar" })); 
             $.each(documento, function () {
+            
+            if(this.apellidoPaterno!='')
             $('#form_movimiento #responsable').append($('<option>', { value: this.pkPersona,text : this.apellidoPaterno+' '+this.apellidoMaterno+' '+this.nombre }));  
+            else
+            $('#form_movimiento #responsable').append($('<option>', { value: this.pkPersona,text : this.razonSocial }));  
+     
             });
             
             if($("#form_movimiento #responsable").val()!=""){
@@ -791,7 +796,13 @@
             $('#persona').append($('<option>', { value: "0",text : "Seleccionar" })); 
             $("#persona").select2("val", "0");
             $.each(documento, function () {
+            
+            if(this.apellidoPaterno!='')
             $('#persona').append($('<option>', { value: this.pkPersona,text : this.apellidoPaterno+' '+this.apellidoMaterno+' '+this.nombre }));  
+            else
+            $('#persona').append($('<option>', { value: this.pkPersona,text : this.razonSocial }));  
+     
+            
             });
             
             if($("#cod_documento").val()!=""){

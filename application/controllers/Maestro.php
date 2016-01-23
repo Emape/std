@@ -72,7 +72,7 @@ class Maestro extends CI_Controller {
             $filter->fecha=$fecha;
             $filter->estado_locador=$estado_locador;
         
-        $existe_fecha   = $this->maestro_model->existeFecha($fecha);
+        $existe_fecha   = $this->maestro_model->existeFecha($fecha,$dependencia);
         
         if($existe_fecha>0){
             $var   = $this->maestro_model->listarAsistencia($filter,$filter_not);
@@ -127,6 +127,7 @@ class Maestro extends CI_Controller {
         $horaMinuto=$this->input->get_post('horaMinuto');
         $asistio=$this->input->get_post('asistio');
         $fecha=$this->input->get_post('fecha');
+        $dependencia=$this->input->get_post('dependencia');
         
         $filter     = new stdClass();
         $filter_not = new stdClass();
@@ -135,6 +136,7 @@ class Maestro extends CI_Controller {
         $filter->horaMinuto=$horaMinuto;
         $filter->asistio=$asistio;
         $filter->fecha=$fecha;
+        $filter->pkDependencia=$dependencia;
         
         $this->maestro_model->registrarAsistencia($filter,$filter_not);
         
@@ -153,7 +155,7 @@ class Maestro extends CI_Controller {
             $filter->fecha=$fecha;
             $filter->estado_locador=$estado_locador;
         
-        $existe_fecha   = $this->maestro_model->existeFecha($fecha);
+        $existe_fecha   = $this->maestro_model->existeFecha($fecha,$dependencia);
         
         if($existe_fecha>0){
             $var   = $this->maestro_model->listarAsistencia($filter,$filter_not);
@@ -187,10 +189,15 @@ class Maestro extends CI_Controller {
         foreach($var as $key => $v ){
             if($v->asistio=='1'){ $asistir="Asistió";} else {$asistir="Faltó";}
             
+            if($v->apellidoPaterno!="")
+            $nombrecompleto=$v->apellidoPaterno.' '.$v->apellidoMaterno.' '.$v->nombre;
+            else
+            $nombrecompleto=$v->razonSocial;
+            
             $obj->setActiveSheetIndex(0)
                 ->setCellValue('A'.$i, ($i-6))
                 ->setCellValue('B'.$i, $v->ruc)
-                ->setCellValue('C'.$i, $v->apellidoPaterno.' '.$v->apellidoMaterno.' '.$v->nombre)
+                ->setCellValue('C'.$i, $nombrecompleto)
                 ->setCellValue('D'.$i, $v->gerencia)
                 ->setCellValue('E'.$i, $asistir )
                 ->setCellValue('F'.$i, $v->tiempo);

@@ -22,16 +22,17 @@
         });
 
         $("#boton_imprimir").click(function(){
-            dependencia='14';
+            dependencia=<?php echo $_SESSION['pkDependencia']?>;
             fecha=$('#fecha').val();
 
             window.open("./maestro/exportar_asistencia?dependencia="+dependencia+"&fecha="+fecha);	
         });
            
         $("#boton_registrar").click(function(){
+            unidad=<?php echo $_SESSION['pkDependencia']?>;
                 $.ajax({
                 url  : '<?php base_url()?>Maestro/registrar_asistencia',
-                data : "fecha="+$("#fecha").val()+ "&"+$("#form_persona").serialize(),
+                data : "dependencia="+unidad+"&fecha="+$("#fecha").val()+ "&"+$("#form_persona").serialize(),
                 type : 'POST',
                 success : function(result) {
                     if(result=='1'){
@@ -118,7 +119,7 @@
     }
   
     function listar_persona(){
-        unidad="14";
+        unidad=<?php echo $_SESSION['pkDependencia']?>;
         $("#cuerpoPersona").fadeIn(1000).html("<tr><td colspan='6' align='center'><img src='<?php base_url();?>images/loader.gif' ></td></tr>");
        
         $.ajax({
