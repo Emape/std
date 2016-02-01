@@ -18,6 +18,13 @@ class Documento extends CI_Controller {
             $this->load->view('documento/index');
 	}
         
+        public function expediente()
+	{   
+            $this->load->library('session');
+            $this->load->helper('url');
+            $this->load->view('documento/expediente');
+	}
+        
         public function listar_documento(){
             $fecha_ini=$this->input->get_post('fecha_ini');
             $fecha_fin=$this->input->get_post('fecha_fin');

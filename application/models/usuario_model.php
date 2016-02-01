@@ -11,7 +11,7 @@ class usuario_model extends CI_Model{
     }
 	
     public function obtener_usuario($filter,$filter_not){
-        $this->db_1->select('*, p.pkDependencia as unidadx');
+        $this->db_1->select('*, p.pkDependencia as unidadx, d.dependencia as central');
         $this->db_1->from($this->table_1.' u');
         $this->db_1->join($this->table_2.' p','p.pkPersona=u.pkPersona');
         $this->db_1->join($this->table_3.' d','d.pkDependencia=u.pkDependencia');

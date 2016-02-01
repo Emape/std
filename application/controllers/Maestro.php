@@ -71,7 +71,9 @@ class Maestro extends CI_Controller {
             $filter->pkDependencia=$dependencia;
             $filter->fecha=$fecha;
             $filter->estado_locador=$estado_locador;
-        
+            $filter->central=$_SESSION['central'];
+            $filter->dependencia=$_SESSION['pkDependencia'];
+            
         $existe_fecha   = $this->maestro_model->existeFecha($fecha,$dependencia);
         
         if($existe_fecha>0){
@@ -80,7 +82,7 @@ class Maestro extends CI_Controller {
         }
         else{
        
-            $var   = $this->maestro_model->listarPersona($filter,$filter_not);
+            $var   = $this->maestro_model->listarPersona2($filter,$filter_not);
             if(count((array)$var)>0) echo json_encode($var); else echo 0;
         }
         
@@ -125,6 +127,8 @@ class Maestro extends CI_Controller {
     public function registrar_asistencia(){
         $pkPersona=$this->input->get_post('pkPersona');
         $horaMinuto=$this->input->get_post('horaMinuto');
+        $horaMinuto2=$this->input->get_post('horaMinuto2');
+        $observacion=$this->input->get_post('observacion');
         $asistio=$this->input->get_post('asistio');
         $fecha=$this->input->get_post('fecha');
         $dependencia=$this->input->get_post('dependencia');
@@ -134,6 +138,8 @@ class Maestro extends CI_Controller {
         
         $filter->pkPersona=$pkPersona;
         $filter->horaMinuto=$horaMinuto;
+        $filter->horaMinuto2=$horaMinuto2;
+        $filter->observacion=$observacion;
         $filter->asistio=$asistio;
         $filter->fecha=$fecha;
         $filter->pkDependencia=$dependencia;
@@ -154,6 +160,8 @@ class Maestro extends CI_Controller {
             $filter->pkDependencia=$dependencia;
             $filter->fecha=$fecha;
             $filter->estado_locador=$estado_locador;
+            $filter->central=$_SESSION['central'];
+            $filter->dependencia=$_SESSION['pkDependencia'];
         
         $existe_fecha   = $this->maestro_model->existeFecha($fecha,$dependencia);
         
@@ -162,7 +170,7 @@ class Maestro extends CI_Controller {
         }
         else{
        
-            $var   = $this->maestro_model->listarPersona($filter,$filter_not);
+            $var   = $this->maestro_model->listarPersona2($filter,$filter_not);
         }
         
         $this->load->library('session');
@@ -200,10 +208,12 @@ class Maestro extends CI_Controller {
                 ->setCellValue('C'.$i, $nombrecompleto)
                 ->setCellValue('D'.$i, $v->gerencia)
                 ->setCellValue('E'.$i, $asistir )
-                ->setCellValue('F'.$i, $v->tiempo);
+                ->setCellValue('F'.$i, $v->tiempo)
+                ->setCellValue('G'.$i, $v->tiempo2)
+                ->setCellValue('H'.$i, $v->observacion);
             $i=$i+1;
         }
-        $obj->getActiveSheet()->getStyle('A7:F'.($i-1))->applyFromArray($style_border);
+        $obj->getActiveSheet()->getStyle('A7:H'.($i-1))->applyFromArray($style_border);
         //prepare download
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="asistencia_diaria.xls"');

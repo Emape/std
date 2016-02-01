@@ -12,7 +12,6 @@ class Acceso extends CI_Controller {
     public function index(){       
         $this->load->helper('url');
         $this->load->view('Acceso/index');
-        
     }
         
     public function obtener_usuario(){       
@@ -53,6 +52,7 @@ class Acceso extends CI_Controller {
                    'gerencia'           => $acceso->descripcion,
                    'sigla'              => $acceso->siglas,
                    'pkDependencia'      => $acceso->unidadx,
+                   'central'            => $acceso->central,
                    'cMenu'              => $array1,
                    'cSubmenu'           => $array2,
                    'cSeccion'           => $array3,

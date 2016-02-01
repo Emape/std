@@ -78,6 +78,45 @@ class maestro_model extends CI_Model{
         return $result;
     }
     
+        public function listarPersona2($filter,$filter_not){
+        $this->db_1->select('p.*,de.descripcion as gerencia,"" as asistio, "" as tiempo, "00:00" as tiempo2, "" as observacion ');
+        $this->db_1->from($this->table_4.' p');
+        $this->db_1->join($this->table_3.' de','de.pkDependencia=p.pkDependencia');
+        
+        if($filter->central=="1"){
+            if($filter->dependencia=='2')
+                $arrcc = array('7', '8', '9','10','11',$filter->pkDependencia);   
+            else if($filter->dependencia=='3')
+                 $arrcc = array('12',$filter->pkDependencia);
+            else if($filter->dependencia=='4')
+                $arrcc = array('13','14',$filter->pkDependencia); 
+            else if($filter->dependencia=='5')
+                $arrcc = array('15','16','17','18',$filter->pkDependencia); 
+            else if($filter->dependencia=='6')
+                $arrcc = array('19','20','21','22',$filter->pkDependencia); 
+            
+            $this->db_1->where_in('p.pkDependencia',$arrcc); 
+        }
+        else{
+        $this->db_1->where('p.pkDependencia',$filter->pkDependencia);     
+        }
+        
+        
+        
+        
+        $this->db_1->where('p.estado','1');
+        if(isset($filter->estado_locador)){$this->db_1->where('p.locador',$filter->estado_locador);}
+        $this->db_1->order_by("de.descripcion,p.razonSocial", "asc");
+        
+        $query = $this->db_1->get();
+        
+        $result = new stdclass();
+        if($query->num_rows()>0){
+        $result = $query->result();
+        }
+        return $result;
+    }
+    
     public function registrarUnidad($filter,$filter_not){
         $data =   array('estado' => '1',
                         'descripcion' => strtoupper($filter->detalle_unidad),
@@ -116,6 +155,8 @@ class maestro_model extends CI_Model{
             
             $data =   array('asistio' => $asistio,
                         'horaMinuto' => $filter->horaMinuto[$key],
+                        'horaMinuto2' => $filter->horaMinuto2[$key],
+                        'observacion' => $filter->observacion[$key],
                         'usuarioModificador' => $_SESSION['usuario'],
                         'fechaModificada' => date('Y-m-d H:i:s'),
                         ); 
@@ -132,6 +173,8 @@ class maestro_model extends CI_Model{
                         'fecha' => $fecha,
                         'pkDependencia' => $filter->pkDependencia,
                         'horaMinuto' => $filter->horaMinuto[$key],
+                        'horaMinuto2' => $filter->horaMinuto2[$key],
+                        'observacion' => $filter->observacion[$key],
                         'usuarioCreador' => $_SESSION['usuario'],
                         'usuarioModificador' => $_SESSION['usuario'],
                         'fechaCreada' => date('Y-m-d H:i:s'),
@@ -161,7 +204,7 @@ class maestro_model extends CI_Model{
     }
     
     public function listarAsistencia($filter,$filter_not){
-        $this->db_1->select('p.*,de.descripcion as gerencia,al.asistio as asistio, al.horaMinuto as tiempo');
+        $this->db_1->select('p.*,de.descripcion as gerencia,al.asistio as asistio, al.horaMinuto as tiempo, al.horaMinuto2 as tiempo2,al.observacion');
         $this->db_1->from($this->table_5.' al');
         $this->db_1->join($this->table_4.' p','p.pkPersona=al.pkPersona');
         $this->db_1->join($this->table_3.' de','de.pkDependencia=p.pkDependencia');
@@ -170,7 +213,7 @@ class maestro_model extends CI_Model{
         $this->db_1->where('p.locador','1');
         $this->db_1->where('al.fecha',$filter->fecha);
         $this->db_1->where('al.pkDependencia',$filter->pkDependencia);
-        $this->db_1->order_by("p.apellidoPaterno", "asc");
+        $this->db_1->order_by("de.descripcion,p.razonSocial", "asc");
         
         $query = $this->db_1->get();
         

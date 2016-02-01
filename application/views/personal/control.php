@@ -145,6 +145,9 @@
             html += "<td>" + this.gerencia + "</td>";
             html += "<td style='text-align:center'><input type='checkbox' " + check + " id='asistio"+v+"' class='check0' name='asistio[]' onclick=chekear('" + v +"')></td>";
             html += "<td style='text-align:center'><span><input readonly style='background:#eee;height:30px' type='text' class='form-control horaMinuto' name='horaMinuto[]' id='horaMinuto"+v+"' value='"+this.tiempo+"' ></span></td>";
+            html += "<td style='text-align:center'><span><input maxlength='5' style='background:#eee;height:30px' type='text' class='form-control horaMinuto2' name='horaMinuto2[]' id='horaMinuto2"+v+"' value='"+this.tiempo2+"' ></span></td>";
+            html += "<td style='text-align:center'><span><input style='background:#eee;height:30px' type='text' class='form-control observacion' name='observacion[]' id='observacion"+v+"' value='"+this.observacion+"' ></span></td>";
+            
             html += "</tr>";
             v++;
             });
@@ -230,13 +233,14 @@
                             <th ><b> Razón Social </b></th>
                             <th ><b> Gerencia </b></th>
                             <th style='width:60px;text-align:center'><b> Asistió <input type="checkbox" name="todo" id="todo"></b></th>
-                            <th style='width:65px;text-align:center'><b> HH:mm </b></th>
-                            
+                            <th style='width:65px;text-align:center'><b> Ingreso HH:mm </b></th>
+                            <th style='width:65px;text-align:center'><b> Salida HH:mm </b></th>
+                            <th style='width:125px;text-align:center'><b> Observación </b></th>
                         </tr>
                         </thead>
                         <tbody id="cuerpoPersona">
 			<tr >
-                            <td  colspan="6" align="center">No se encontraron resultados </td>
+                            <td  colspan="7" align="center">No se encontraron resultados </td>
                         </tr>	    
                         </tbody>	
                     </table>
