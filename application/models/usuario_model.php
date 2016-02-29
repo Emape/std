@@ -32,6 +32,20 @@ class usuario_model extends CI_Model{
         }
         return $result;
     } 
+	
+	public function obtenerPermiso($filter,$filter_not){
+        $this->db_1->select('*');
+        $this->db_1->from($this->table_4.' p');
+		$this->db_1->where('p.pkUsuario',$filter->codigo);
+		
+        $query = $this->db_1->get();
+        
+        $result = new stdclass();
+        if($query->num_rows()>0){
+        $result = $query->result();
+        }
+        return $result;
+    }
     
     public function obtener_permiso($filter,$filter_not){
         $this->db_1->select('pkPermiso,pkMenu,pkSubmenu,pkSeccion,pkOperador');
@@ -57,5 +71,47 @@ class usuario_model extends CI_Model{
         $this->db_1->where('estado', '1');
 		$this->db_1->where('usuario', $_SESSION['usuario']);
         $this->db_1->update($this->table_1, $data);   
+	}
+	
+	public function registrarPermiso($filter,$filter_not){
+
+		$this->db_1->select('count(*) as contador');
+        $this->db_1->from($this->table_4.' p');
+        $this->db_1->where('p.pkUsuario',$filter->codigo);
+		$this->db_1->where('p.pkMenu',$filter->p1);
+		$this->db_1->where('p.pkSubmenu',$filter->p2);
+		$this->db_1->where('p.pkSeccion',$filter->p3);
+		$this->db_1->where('p.pkOperador',$filter->p4);
+
+        $query = $this->db_1->get();
+        $contador=$query->row()->contador;
+
+		if($contador=='0'){
+			$data =   array('estado' => '1',
+                        'pkUsuario' => $filter->codigo,
+                        'pkMenu' => $filter->p1,
+                        'pkSubmenu' => $filter->p2,
+						'pkSeccion' => $filter->p3,
+                        'pkOperador' => $filter->p4,
+                        'usuarioCreador' => $_SESSION['usuario'],
+                        'usuarioModificador' => $_SESSION['usuario'],
+                        'fechaCreada' => date('Y-m-d H:i:s'),
+                        'fechaModificada' => date('Y-m-d H:i:s'),
+                        );    
+			$this->db_1->insert($this->table_4, $data); 
+		}
+		else{
+			$data =   array('estado' => $filter->estado,
+                        'usuarioModificador' => $_SESSION['usuario'],
+                        'fechaModificada' => date('Y-m-d H:i:s'),
+						);    
+		$this->db_1->where('pkUsuario',$filter->codigo);
+		$this->db_1->where('pkMenu',$filter->p1);
+		$this->db_1->where('pkSubmenu',$filter->p2);
+		$this->db_1->where('pkSeccion',$filter->p3);
+		$this->db_1->where('pkOperador',$filter->p4);
+		
+		$this->db_1->update($this->table_4, $data);
+		}
 	}
 }

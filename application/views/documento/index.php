@@ -145,18 +145,16 @@
             else{
                 $.ajax({
                 url  : '<?php base_url()?>Documento/registrar_documento',
-                data : "tipo_doc="+$('#tipo_doc').val()+"&cod_documento="+$('#cod_documento').val()+"&areaTrabajo="+CKEDITOR.instances['editor1'].getData()+ "&"+$('#form_documento').serialize(),
+                data : "tipo_doc="+$('#tipo_doc').val()+"&nro_tramite="+$('#nro_tramite').val()+"&cod_documento="+$('#cod_documento').val()+"&areaTrabajo="+CKEDITOR.instances['editor1'].getData()+ "&"+$('#form_documento').serialize(),
                 type : 'POST',
                 success : function(result) {
-                    if(result=='1'){
                     $(".btn-default-cerrar").click();
-                    $("#texto-green").html("Se registró el documento correctamente");
+                    $("#texto-green").html("Se registró el documento con N. Trámite: <font size='14px'><b>"+ result +"</b></font>");
                     $("#alert-green").slideDown('slow');
                     listar_documento();
 					listar_documento_movimiento();
                     ocultarAlerta();
                     $(".btn-limpiar1").click();
-                    }
                 },
                 error : function(request, xhr, status) {
                 alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
@@ -1425,7 +1423,7 @@
                         </thead>
                         <tbody id="cuerpoMovimiento">
                         <tr>
-                           <td colspan=6 align=center>No se encontraron resultados</td>
+                           <td colspan=7 align=center>No se encontraron resultados</td>
                         </tr>
                         </tbody>
                     </table>		  
@@ -1491,6 +1489,12 @@
 
                 <div class="modal-body box-body">
                     <div class="row">
+						<div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">
+                            <div class="form-group">
+                                <label>Fecha</label>
+                                <input type='text' name="fecha" id="fecha"  class="form-control" readonly style="background-color: #eee" />
+                            </div>
+                        </div>
                         <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">
                             <div class="form-group">
                                 <label>Tipo Documento</label>                             
@@ -1498,12 +1502,7 @@
                                 </select>
                             </div>
                         </div>
-			<div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">
-                            <div class="form-group">
-                                <label>Fecha</label>
-                                <input type='text' name="fecha" id="fecha"  class="form-control" readonly style="background-color: #eee" />
-                            </div>
-                        </div>
+
                         
                         <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
                             <div class="form-group">
@@ -1642,14 +1641,14 @@
                                 </select>
                             </div>
 						</div>
-						<div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">
+						<div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
                             <div class="form-group">
 							<!-- 0000-<?php //echo date('Y');?>-EMAPE/<?php //echo $_SESSION['sigla'];?> -->
                                 <label># Doc.</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="checkgg"> V°B° G.G.
                                 <input type='text' name="memo" id="memo"  class="form-control" value="" >
                             </div>
                         </div>
-                        <div class="col-xs-12 col-sm-6 col-md-2 col-lg-4" >
+                        <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3" >
                             <div class="form-group">
                                 <label>Acciones</label><br>
                                 <select name="accion" id="accion" class="form-control select2" multiple style="height:90px" >
@@ -1684,13 +1683,12 @@
                         </div>
                     </div>	
 					<div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                             <label class="control-label">Responsable (Sistema Anterior)</label> 
                             <input type="text" class="form-control" name="responsable2" id="responsable2" readonly >
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                             <label class="control-label">Cargar Documento</label>
                             <div class="input-group">    
                             <span class="input-group-btn">
@@ -1712,11 +1710,11 @@
                             </div>
                         </div>
                     </div>                  
-                    <div class="row">
+                    <div class="row" style="display:none">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="form-group">
                                 <label>Área de Trabajo</label>
-                                <textarea name="editor2" id="editor2" rows="20" cols="80" ></textarea>
+                                <textarea  name="editor2" id="editor2" rows="20" cols="80" ></textarea>
                                 </textarea>
                             </div>
                         </div>

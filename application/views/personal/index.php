@@ -12,6 +12,17 @@
 
 		$("#boton_permiso").hide();
 		
+		$.ajax({
+        url : '<?php base_url()?>acceso/plantilla_permiso',
+        type : 'POST',
+        success : function(result) {
+            $("#arbol").html(result);
+        },
+        error : function(request, xhr, status) {
+            alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
+        }
+        });	
+		
 	});
         /*$("#boton_registrar").click(function(){
             validarCampos();
@@ -99,7 +110,7 @@
 			else {nombres=  this.apellidoPaterno + ' ' + this.apellidoMaterno + ' ' + this.nombre;}	
 			if(this.nivel==null){nivel="";} else {if(this.nivel=='1') nivel="ADMINISTRADOR";else if(this.nivel=='3') nivel="USUARIO"; else nivel="";} 
 			if(this.cargo=='1'){cargo="Gerente / Jefe";} else {cargo="Empleado"} 			
-            html += "<tr id='fila" + this.pkPersona + "' onclick=detalle("+this.pkPersona+") >";
+            html += "<tr id='fila" + this.pkPersona + "' onclick=detalle("+this.pkPersona+","+this.pkUsuario+") >";
             html += "<td style='text-align:center'><input id='pkPersona"+v+"' name='pkPersona[]' type='hidden'  value='" + this.pkPersona + "' />"+v+"</td>";
             html += "<td style='text-align:center'>" + this.ruc + "</td>";
 			html += "<td><input type=hidden id=campo" + this.pkPersona + " value='" + nombres + "'  >" + nombres + "</td>";
@@ -118,12 +129,51 @@
         });
 	}
 	
-	function detalle(cod,nom){
+	function detalle(cod,cod_user){
+		$(".check").each(function(){$(this).prop('checked',false);});
         $('#tabla_persona tr').removeClass('highlighted');
         $("#fila" + cod).addClass('highlighted');
         $("#cod_persona").val(cod);
+		$("#cod_usuario").val(cod_user);
 		$("#boton_permiso").show();
 		$("#nombrecompleto").html($("#campo"+cod).val());
+		
+		$.ajax({
+        url : '<?php base_url()?>acceso/obtener_permiso',
+        type : 'POST',
+		data : "codigo="+$("#cod_usuario").val(),
+        success : function(result) {
+			var documento = eval(result);      
+            $.each(documento, function () {
+
+				if(this.estado=='1')
+				$("#checks"+this.pkOperador).prop('checked',true);
+				else
+				$("#checks"+this.pkOperador).prop('checked',false);	
+            });
+        },
+        error : function(request, xhr, status) {
+            alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
+        }
+        });	
+	}
+	
+	function activar(p1,p2,p3,p4){
+		
+		if($('#checks'+p4).is(':checked')) estado="1";
+        else estado="0";
+		
+		$.ajax({
+        url : '<?php base_url()?>acceso/registrar_permiso',
+        type : 'POST',
+		data : "codigo="+$("#cod_usuario").val()+"&p1="+p1+"&p2="+p2+"&p3="+p3+"&p4="+p4+"&estado="+estado,
+        success : function(result) {
+			console.log(result);	
+        },
+        error : function(request, xhr, status) {
+            alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
+        }
+        });	
 	}
 </script>
 
@@ -165,6 +215,7 @@
                                 </span>
                                 <input type='text' name="search" id="search"  class="form-control" />
 								<input type="hidden" name="cod_persona" id="cod_persona">
+								<input type="hidden" name="cod_usuario" id="cod_usuario">
 								<input type="hidden" name="nombre" id="nombre">
 								
                                 </div>
@@ -207,20 +258,30 @@
     </div><!-- ./row -->
     
     <div class="modal fade" id="permisoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel">Asignar Permisos a <span id="nombrecompleto"></span></h4>
+                    <h4 class="modal-title" id="myModalLabel">Persona: <span id="nombrecompleto"></span></h4>
                 </div>
-                <div class="modal-body">
-                    <p>Desea realizar el cierre de  <span id="mesanio"></span></p>
-                    <p class="debug-url"></p>
-                </div>
-                <div class="modal-footer">
-                    <button id="cerrar" type="button" class="btn btn-default btn-default-cerrar" data-dismiss="modal">Cancelar</button>
-                    <a class="btn btn-danger btn-proceder">Proceder</a>
-                </div>
+				<div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="form-group">  
+                                <div class="tree">
+                                    <ul>
+                                    <li>
+                                    <a href="#"><b>Permiso de Usuario</b></a>
+                                    
+                                    <span id="arbol"></span>
+                                    
+                                    </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>	
+                </div> 
             </div>
         </div>
     </div>

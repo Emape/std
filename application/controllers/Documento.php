@@ -105,6 +105,7 @@ class Documento extends CI_Controller {
             $persona=$this->input->get_post('persona');
             $asunto=$this->input->get_post('asunto');
             $areaTrabajo=$this->input->get_post('areaTrabajo');
+			$nro_tramite=$this->input->get_post('nro_tramite');
 
             $filter     = new stdClass();
             $filter_not = new stdClass();
@@ -119,15 +120,16 @@ class Documento extends CI_Controller {
             $filter->persona=$persona;
             $filter->asunto=$asunto;
             $filter->areaTrabajo=$areaTrabajo;
+			$filter->nroTramite=$nro_tramite;
             
             if($cod_documento==""){
-            $this->documento_model->registrarDocumento($filter,$filter_not);
+            $var=$this->documento_model->registrarDocumento($filter,$filter_not);
             }
             else{
-            $this->documento_model->modificarDocumento($filter,$filter_not);    
+            $var=$this->documento_model->modificarDocumento($filter,$filter_not);    
             }
             
-            echo "1";
+            echo $var;
         }
         
         public function registrar_movimiento(){

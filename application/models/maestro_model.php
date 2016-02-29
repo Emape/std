@@ -14,6 +14,7 @@ class maestro_model extends CI_Model{
         $this->table_5 = "asistencia_locador";
         $this->table_6 = "cierre_asistencia";
 		$this->table_7 = "usuario";
+		$this->table_8 = "menu";
     }
     
     public function listarTipo($filter,$filter_not){
@@ -150,7 +151,7 @@ class maestro_model extends CI_Model{
     }
     
 	public function listarPersona3(){
-        $this->db_1->select('p.*,de.descripcion as gerencia,pe.nivel ');
+        $this->db_1->select('p.*,de.descripcion as gerencia,pe.nivel,pe.pkUsuario ');
         $this->db_1->from($this->table_4.' p');
         $this->db_1->join($this->table_3.' de','de.pkDependencia=p.pkDependencia');
 		$this->db_1->join($this->table_7.' pe','pe.pkPersona=p.pkPersona','left');
@@ -159,6 +160,30 @@ class maestro_model extends CI_Model{
 		$this->db_1->where('p.pkEmpresa','1');
         $this->db_1->order_by("de.descripcion,p.razonSocial", "asc");
         
+        $query = $this->db_1->get();
+        
+        $result = new stdclass();
+        if($query->num_rows()>0){
+        $result = $query->result();
+        }
+        return $result;
+    }
+	
+	public function plantillaPermiso(){
+        $this->db_1->select('m1.pkMenu as id1, m1.descripcion des1,m2.pkMenu as id2, m2.descripcion des2,m3.pkMenu as id3, m3.descripcion des3,m4.pkMenu as id4, m4.descripcion des4');
+        $this->db_1->from($this->table_8.' m1');
+        $this->db_1->join($this->table_8.' m2','m2.dependencia=m1.pkMenu');
+		$this->db_1->join($this->table_8.' m3','m3.dependencia=m2.pkMenu');
+		$this->db_1->join($this->table_8.' m4','m4.dependencia=m3.pkMenu');
+        $this->db_1->where('m1.nivel','1');
+		$this->db_1->where('m2.nivel','2');
+		$this->db_1->where('m3.nivel','3');
+		$this->db_1->where('m4.nivel','4');
+        $this->db_1->order_by("m1.descripcion", "asc");
+        $this->db_1->order_by("m2.descripcion", "asc");
+		$this->db_1->order_by("m3.descripcion", "asc");
+		$this->db_1->order_by("m4.descripcion", "asc");
+		
         $query = $this->db_1->get();
         
         $result = new stdclass();

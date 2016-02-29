@@ -161,6 +161,8 @@ class documento_model extends CI_Model{
         $datau = array('nroTramite' => date("Y").$_SESSION['sigla'].str_pad(($contar), '6', '0', STR_PAD_LEFT));
         $this->db_1->where('pkDocumento', $id);
         $this->db_1->update($this->table_1, $datau);
+		
+		return date("Y").$_SESSION['sigla'].str_pad(($contar), '6', '0', STR_PAD_LEFT);
     }
     
     public function registrarMovimiento($filter,$filter_not){
@@ -264,6 +266,8 @@ class documento_model extends CI_Model{
         $this->db_1->where('estado', '1');
         $this->db_1->where('pkDocumento', $filter->cod_documento);
         $this->db_1->update($this->table_1, $data); 
+		
+		return  $filter->nroTramite;
     }
     
     public function anularDocumento($filter,$filter_not){
