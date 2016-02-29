@@ -125,7 +125,7 @@
 </style>
 <div class="content-wrapper">
 	<div id="container-ajax"></div>
-        
+    <!--    
         <div class="container">
     <div class="row chat-window col-xs-5 col-md-3" id="chat_window_1" style="margin-left:10px;">
         <div class="col-xs-12 col-md-12">
@@ -236,8 +236,8 @@
             <li class="divider"></li>
             <li><a href="#"><span class="glyphicon glyphicon-eye-close"></span> Invisivel</a></li>
         </ul>
-    </div>-->
-</div>
+    </div>
+</div>-->
         
     </div>
 

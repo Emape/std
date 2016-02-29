@@ -27,7 +27,7 @@
 			<a href="#"><img width='75%' class="img-responsive" src="<?php base_url()?>images/login-logo.png" alt="Emape Logo" /></a>
                     </div> 
                     <hr />
-                    <p align=center style="font-size:18px;color:#888"> Módulo de Documentos</p>
+                    <p align=center style="font-size:18px;color:#888"> Módulo GEMA</p>
                     <form id=form_login name=form_login action='#' method="post">
 			<div class="login-form">
                         <input type="email" placeholder="Mi Usuario" id="usuario" name="usuario" class="input-field" /> 

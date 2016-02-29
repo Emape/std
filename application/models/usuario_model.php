@@ -3,6 +3,8 @@
 class usuario_model extends CI_Model{
     public function __construct(){
         parent::__construct();
+		 $this->load->library('session');
+        date_default_timezone_set('America/Lima');
         $this->db_1 = $this->load->database('prueba', TRUE);
         $this->table_1 = "usuario";
         $this->table_2 = "persona";
@@ -11,7 +13,7 @@ class usuario_model extends CI_Model{
     }
 	
     public function obtener_usuario($filter,$filter_not){
-        $this->db_1->select('*, p.pkDependencia as unidadx, d.dependencia as central');
+        $this->db_1->select('*, p.pkDependencia as unidadx,u.pkDependencia as unidadu, d.dependencia as central');
         $this->db_1->from($this->table_1.' u');
         $this->db_1->join($this->table_2.' p','p.pkPersona=u.pkPersona');
         $this->db_1->join($this->table_3.' d','d.pkDependencia=u.pkDependencia');
@@ -31,7 +33,7 @@ class usuario_model extends CI_Model{
         return $result;
     } 
     
-        public function obtener_permiso($filter,$filter_not){
+    public function obtener_permiso($filter,$filter_not){
         $this->db_1->select('pkPermiso,pkMenu,pkSubmenu,pkSeccion,pkOperador');
         $this->db_1->from($this->table_4.' p');
         
@@ -46,4 +48,14 @@ class usuario_model extends CI_Model{
         }
         return $result;
     } 
+	
+	public function cambiarContrasena($filter,$filter_not){
+		$data =   array('contrasena' => md5($filter->pass),
+						'usuarioModificador' => $_SESSION['usuario'],
+                        'fechaModificada' => date('Y-m-d H:i:s'),
+                        );					
+        $this->db_1->where('estado', '1');
+		$this->db_1->where('usuario', $_SESSION['usuario']);
+        $this->db_1->update($this->table_1, $data);   
+	}
 }

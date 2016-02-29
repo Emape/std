@@ -47,18 +47,19 @@ class documento_model extends CI_Model{
     public function listarMovimiento($filter,$filter_not){
         $this->db_1->select('m.*,s.descripcion as tipo, d.descripcion as dependencia, CONCAT(pe.nombre, " ",pe.apellidoPaterno, " ",pe.apellidoMaterno) as gerente');
         $this->db_1->from($this->table_4.' m');
-        $this->db_1->join($this->table_5.' d','d.pkDependencia=m.pkDependencia');
-        $this->db_1->join($this->table_6.' p','p.pkPersona=m.pkPersona');
-        $this->db_1->join($this->table_3.' s','s.pkTipo=m.situacion');
-        $this->db_1->join($this->table_6.' pe','pe.pkPersona=d.pkGerente');
+        $this->db_1->join($this->table_5.' d','d.pkDependencia=m.pkDependencia','LEFT');
+        $this->db_1->join($this->table_6.' p','p.pkPersona=m.pkPersona','LEFT');
+        $this->db_1->join($this->table_3.' s','s.pkTipo=m.situacion','LEFT');
+        $this->db_1->join($this->table_6.' pe','pe.pkPersona=d.pkGerente','LEFT');
         
         $this->db_1->where('m.pkDocumento',$filter->cod);
         if(isset($filter->nromov)){$this->db_1->where('m.pkMovimiento',$filter->nromov);}
-        $this->db_1->where('pe.estado','1');
-        $this->db_1->where('pe.cargo','1');
+        //$this->db_1->where('pe.estado','1');
+        //$this->db_1->where('pe.cargo','1');
         $this->db_1->where('m.estado','1');
-	$this->db_1->where('d.estado','1');
-        $this->db_1->where('p.estado','1');
+		$this->db_1->where('d.estado','1');
+		$this->db_1->order_by('m.fechaCreada','asc');
+        //$this->db_1->where('p.estado','1');
         
         $query = $this->db_1->get();
         
@@ -68,9 +69,31 @@ class documento_model extends CI_Model{
         }
         return $result;
     }
+	
+	public function obtenerNroTipoDoc($filter,$filter_not){
+        /*$this->db_1->select("de.siglas , MAX(substring_index(d.nroDocumento,'-',1)*1)+1 as nro");
+        $this->db_1->from($this->table_1.' d');
+        $this->db_1->join($this->table_5.' de','de.pkDependencia=d.pkDependencia');
+        $this->db_1->where('d.fechaDocumento >=',date('Y').'-01-01');
+        $this->db_1->where('d.pkTipoDoc','1');
+		$this->db_1->where('d.pkTipo',$filter->tipo);
+		$this->db_1->where('d.pkDependencia',$filter->unidad);
+		$this->db_1->not_like('d.nroDocumento','2015');*/
+		
+		$query=$this->db_1->query("(SELECT de.siglas, MAX(substring_index(d.nroDocumento, '-', 1)*1)+1 as nro FROM documento d JOIN dependencia de ON de.pkDependencia=d.pkDependencia WHERE d.fechaDocumento >= '".date('Y').'-01-01'."' AND d.pkTipoDoc = '1' AND d.pkTipo = '".$filter->tipo."' AND d.pkDependencia = '".$filter->unidad."' AND d.nroDocumento NOT LIKE '%2015%') UNION (SELECT de.siglas, MAX(substring_index(d.nroMemo, '-', 1)*1)+1 as nro FROM movimiento d JOIN dependencia de ON de.pkDependencia=d.pkDependencia WHERE d.fechaCreada >= '".date('Y').'-01-01'."' AND d.pkTipo = '".$filter->tipo."' AND d.pkDependencia = '".$filter->unidad."' AND d.nroMemo NOT LIKE '%2015%' )");
+		
+        //$query = $this->db_1->get();
+        
+        $result = new stdClass();
+        if($query->num_rows()>0){
+        $result = $query->result();
+        }
+        return $result;
+    }
+	
     
     public function listarDocumentoMovimiento($filter,$filter_not){
-        $this->db_1->select('d.*,m.fechaCreada as fechaMovimiento,b.descripcion as estadoMovimiento,"" as nroTramiteMovimiento, a.descripcion as dependenciaMovimiento,m.pkDependencia,m.pkDocumento,e.pkEmpresa,e.ruc,e.razonSocial,e.estado,t.descripcion as tipo, s.descripcion as situacion,de.descripcion as dependencia');
+        $this->db_1->select('CONCAT(pe.nombre, " ",pe.apellidoPaterno, " ",pe.apellidoMaterno) as gerente,d.*,m.fechaCreada as fechaMovimiento,b.descripcion as estadoMovimiento,"" as nroTramiteMovimiento, a.descripcion as dependenciaMovimiento,m.pkDependencia,m.pkDocumento,e.pkEmpresa,e.ruc,e.razonSocial,e.estado,t.descripcion as tipo, s.descripcion as situacion,de.descripcion as dependencia');
         $this->db_1->from($this->table_1.' d');
         $this->db_1->join($this->table_2.' e','e.pkEmpresa=d.pkEmpresa');
         $this->db_1->join($this->table_3.' t','t.pkTipo=d.pkTipo');
@@ -79,6 +102,7 @@ class documento_model extends CI_Model{
         $this->db_1->join($this->table_4.' m','m.pkDocumento=d.pkDocumento','left');
         $this->db_1->join($this->table_5.' a','a.pkDependencia=m.pkDependencia','left');
         $this->db_1->join($this->table_3.' b','b.pkTipo=m.situacion','left');
+		$this->db_1->join($this->table_6.' pe','pe.pkPersona=a.pkGerente','LEFT');
         
         $this->db_1->where('d.fechaDocumento >=',date('Y-m-d', strtotime($filter->fecha_ini)));
         $this->db_1->where('d.fechaDocumento <=',date('Y-m-d', strtotime($filter->fecha_fin)));
@@ -88,9 +112,11 @@ class documento_model extends CI_Model{
         //if(isset($filter->flaguser)){$this->db_1->where('d.usuarioCreador',$_SESSION['usuario']);}
         
         $this->db_1->where('d.estado','1');
-	$this->db_1->where('e.estado','1');
+		$this->db_1->where('e.estado','1');
         $this->db_1->where('t.estado','1');
         $this->db_1->where('(m.estado = 1 OR  ISNULL(m.estado))');
+		
+		$this->db_1->order_by('fechaMovimiento','asc');
         
         $query = $this->db_1->get();
         
@@ -124,7 +150,7 @@ class documento_model extends CI_Model{
         $this->db_1->insert($this->table_1, $data); 
         $id=$this->db_1->insert_id();
         
-        $this->db_1->select('MAX(CONVERT(RIGHT(nroTramite,6),UNSIGNED INTEGER)) AS ultimo');
+        $this->db_1->select('(MAX(CONVERT(RIGHT(nroTramite,6),UNSIGNED INTEGER))+1) AS ultimo');
         $this->db_1->from($this->table_1.' d');
         $this->db_1->where('d.fechaDocumento>=',date("Y")."-01-01");
         $this->db_1->where('d.dependenciaCreador',$_SESSION['pkDependencia']);
@@ -151,6 +177,7 @@ class documento_model extends CI_Model{
                         'prioridad' => $filter->prioridad,
                         'acciones' => $filter->acciones,
                         'asunto' => $filter->asunto,
+						'pkTipo' => $filter->tipo2,
                         'areaTrabajo' => $filter->areaTrabajo,
                         'usuarioCreador' => $_SESSION['usuario'],
                         'usuarioModificador' => $_SESSION['usuario'],
@@ -158,9 +185,22 @@ class documento_model extends CI_Model{
                         'fechaModificada' => date('Y-m-d H:i:s'),
                         );    
         $this->db_1->insert($this->table_4, $data);      
+		
+		$data =   array('estado' => '1',                    
+                        'usuarioModificador' => $_SESSION['usuario'],
+                        'fechaModificada' => date('Y-m-d H:i:s'),
+						'situacion' => $filter->situacion,
+                        );	
+						
+        $this->db_1->where('estado', '1');
+        $this->db_1->where('pkDocumento', $filter->cod_documento);
+        $this->db_1->update($this->table_1, $data);      
+		
     }
     
     public function modificarMovimiento($filter,$filter_not){
+		
+		if(isset($filter->dependencia)){
         $data =   array('estado' => '1',
                         'decreto' => $filter->decreto,
                         'ampliacion' => $filter->ampliacion,
@@ -173,13 +213,40 @@ class documento_model extends CI_Model{
                         'prioridad' => $filter->prioridad,
                         'acciones' => $filter->acciones,
                         'asunto' => $filter->asunto,
+						'pkTipo' => $filter->tipo2,
                         'areaTrabajo' => $filter->areaTrabajo,
                         'usuarioModificador' => $_SESSION['usuario'],
                         'fechaModificada' => date('Y-m-d H:i:s'),
                         );
+						
+		}	
+		else{
+	        $data =   array('estado' => '1',                    
+                        'nroMemo' => $filter->nroMemo,
+                        'pkEmpresa' => '1',
+                        'pkPersona' => $filter->persona,
+                        'situacion' => $filter->situacion,
+                        'areaTrabajo' => $filter->areaTrabajo,
+                        'usuarioModificador' => $_SESSION['usuario'],
+                        'fechaModificada' => date('Y-m-d H:i:s'),
+						'pkTipo' => $filter->tipo2,
+                        );
+		}		
+						
         $this->db_1->where('estado', '1');
         $this->db_1->where('pkMovimiento', $filter->cod_movimiento);
         $this->db_1->update($this->table_4, $data);      
+		
+		$data =   array('estado' => '1',                    
+                'usuarioModificador' => $_SESSION['usuario'],
+                'fechaModificada' => date('Y-m-d H:i:s'),
+				'situacion' => $filter->situacion,
+                );
+	
+						
+        $this->db_1->where('estado', '1');
+        $this->db_1->where('pkDocumento', $filter->cod_documento);
+        $this->db_1->update($this->table_1, $data);
     }
     
     public function modificarDocumento($filter,$filter_not){

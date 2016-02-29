@@ -9,7 +9,7 @@ class Home extends CI_Controller {
                 if(!isset($_SESSION['codigo'])) header("Location:./acceso");
                 $this->load->helper('url');
                 $this->load->helper('header');
-		$this->load->view('home/index');
+				$this->load->view('home/index');
                 $this->load->helper('footer');
 	}
 }

@@ -245,7 +245,7 @@ $(document).on('click', '.icon_close', function (e) {
           <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
               <!-- User Account Menu -->
-              <li class="dropdown user user-menu">
+              <li class="dropdown user user-menu" id="square-profile">
                 <!-- Menu Toggle Button -->
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <!-- The user image in the navbar-->
@@ -261,6 +261,9 @@ $(document).on('click', '.icon_close', function (e) {
                     </p>
                   </li>
                   <li class="user-footer">
+				  <div class="pull-left">
+                      <a href="./acceso/password" class="btn btn-default btn-flat ajaxmenu"><i class="fa fa-lock"></i> Cambiar Contraseña</a>
+                    </div>
                     <div class="pull-right">
                       <a href="./acceso/cerrar_sesion" class="btn btn-default btn-flat"><i class="fa fa-power-off"></i> Salir</a>
                     </div>
@@ -279,15 +282,16 @@ $(document).on('click', '.icon_close', function (e) {
           <!-- Sidebar Menu -->
             <ul class="sidebar-menu">
                 <li class="header"></li>
-
                 <?php if(in_array('1',$_SESSION['cMenu'])){?>
                 <li class="treeview">  
                 <a href="#"><span>ADMINISTRACIÓN</span> <i class="fa fa-angle-left pull-right"></i></a>
+				<?php if(in_array('37',$_SESSION['cSubmenu'])){?>
                 <ul class="treeview-menu">
-                <li><a href="./documento/index" class="ajaxmenu"><i class="fa fa-user"></i><span> Usuarios</span>  
+                <li><a href="./personal/index" class="ajaxmenu"><i class="fa fa-user"></i><span> Usuarios</span>  
                 </a>	      
-		</li>
-                </ul>    
+				</li>
+                </ul>  
+				<?php } ?>				
                 </li>
                 <?php } if(in_array('2',$_SESSION['cMenu'])){?>                
                 <li class="treeview">    
@@ -300,7 +304,6 @@ $(document).on('click', '.icon_close', function (e) {
                     </ul>
                     <?php } ?>
                 </li>
-                
                 <?php } if(in_array('21',$_SESSION['cMenu'])){?>                
                 <li class="treeview">    
                 <a href="#"><span>PERSONAL</span> <i class="fa fa-angle-left pull-right"></i></a>

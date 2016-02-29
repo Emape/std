@@ -9,6 +9,8 @@ class Documento extends CI_Controller {
         public function __construct(){
         parent::__construct();
         $this->load->model('documento_model'); 
+		$this->load->library('session');
+		if (!isset($_SESSION['usuario'])) {echo '<script type="text/javascript">window.location="../std";</script>';}
         }
 
 	public function index()
@@ -76,6 +78,21 @@ class Documento extends CI_Controller {
 
             if(count((array)$var)>0) echo json_encode($var); else echo 0;
         }
+		
+		public function obtener_nro_tipodoc(){
+
+            $tipo=$this->input->get_post('tipo');
+            $unidad=$this->input->get_post('unidad');
+            
+            $filter     = new stdClass();
+            $filter_not = new stdClass();
+                     
+            $filter->unidad=$unidad;
+            $filter->tipo=$tipo;
+            
+            $var   = $this->documento_model->obtenerNroTipoDoc($filter,$filter_not);
+            if(count((array)$var)>0) echo json_encode($var); else echo 0;
+        }
         
         public function registrar_documento(){
             $cod_documento=$this->input->get_post('cod_documento');
@@ -126,6 +143,7 @@ class Documento extends CI_Controller {
             $prioridad=$this->input->get_post('prioridad');
             $acciones=$this->input->get_post('acciones');
             $asunto=$this->input->get_post('asunto');
+			$tipo2=$this->input->get_post('tipo2');
             $areaTrabajo=$this->input->get_post('areaTrabajo');
 
             $filter     = new stdClass();
@@ -143,6 +161,7 @@ class Documento extends CI_Controller {
             $filter->prioridad=$prioridad;
             $filter->acciones=$acciones;
             $filter->asunto=$asunto;
+			$filter->tipo2=$tipo2;
             $filter->areaTrabajo=$areaTrabajo;
                       
             if($cod_movimiento==""){
@@ -195,6 +214,25 @@ class Documento extends CI_Controller {
 
             if(count((array)$var)>0) echo json_encode($var); else echo 0;
         }
+		
+		public function listar_documento_movimiento(){
+        $doc=$this->input->get_post('tipo_doc');
+        $ini=$this->input->get_post('fecha_ini');
+        $fin=$this->input->get_post('fecha_fin');
+               
+        $filter     = new stdClass();
+        $filter_not = new stdClass();
+        
+        $filter->tipo_doc=$doc;
+        $filter->fecha_ini=str_replace('/', '-', $ini);
+        $filter->fecha_fin=str_replace('/', '-', $fin);
+        $filter->flaguser="1";
+
+        $var   = $this->documento_model->listarDocumentoMovimiento($filter,$filter_not);
+		
+		if(count((array)$var)>0) echo json_encode($var); else echo 0;
+
+        }
         
         public function exportar_documento_movimiento(){
         $doc=$this->input->get_post('doc');
@@ -242,7 +280,7 @@ class Documento extends CI_Controller {
                 ->setCellValue('B'.$i, $v->nroTramite)
                 ->setCellValue('C'.$i, date('d/m/Y',  strtotime($v->fechaCreada)))    
                 ->setCellValue('D'.$i, $v->tipo)
-                ->setCellValue('E'.$i, $v->nroDocumento)
+                ->setCellValue('E'.$i, trim($v->nroDocumento))
                 ->setCellValue('F'.$i, $v->dependencia)
                 ->setCellValue('G'.$i, strtoupper($v->asunto))
                 ->setCellValue('H'.$i, $v->dependenciaMovimiento)

@@ -5,16 +5,35 @@ class Acceso extends CI_Controller {
     
     public function __construct(){
         parent::__construct();
-	$this->load->model('usuario_model'); 
+		$this->load->model('usuario_model'); 
         $this->load->library('session');
+
     }
 
     public function index(){       
         $this->load->helper('url');
         $this->load->view('Acceso/index');
     }
-        
-    public function obtener_usuario(){       
+	
+	public function password(){       
+        $this->load->helper('url');
+        $this->load->view('Acceso/password');
+    }
+	
+	public function cambiar_contrasena(){
+		$pass=$this->input->get_post('pass');
+            
+        $filter     = new stdClass();
+        $filter_not = new stdClass();
+                     
+        $filter->pass=$pass;
+                    
+        $var   = $this->usuario_model->cambiarContrasena($filter,$filter_not);
+		
+		echo "1";
+    }    
+	
+    public function obtener_usuario(){ 
         $usuario=$this->input->get_post('usuario');
         $contrasena=$this->input->get_post('contrasena');
         
@@ -51,7 +70,7 @@ class Acceso extends CI_Controller {
                    'apellidoMaterno'    => $acceso->apellidoMaterno,
                    'gerencia'           => $acceso->descripcion,
                    'sigla'              => $acceso->siglas,
-                   'pkDependencia'      => $acceso->unidadx,
+                   'pkDependencia'      => $acceso->unidadu,
                    'central'            => $acceso->central,
                    'cMenu'              => $array1,
                    'cSubmenu'           => $array2,

@@ -9,6 +9,8 @@ class Personal extends CI_Controller {
         public function __construct(){
         parent::__construct();
         $this->load->model('documento_model'); 
+		$this->load->library('session');
+		if (!isset($_SESSION['usuario'])) {echo '<script type="text/javascript">window.location="../std";</script>';}
         }
 
 	public function index()

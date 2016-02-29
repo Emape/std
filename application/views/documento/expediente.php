@@ -3,56 +3,18 @@
 
 <script>
     $(document).ready(function(){
-        <?php 
-        if(in_array('6',$_SESSION['cSeccion']) and in_array('7',$_SESSION['cSeccion'])){?>
-        $("#tipo_doc").val('2');
-        $('.bloqueIE').show();
-        <?php }
-        else if(in_array('6',$_SESSION['cSeccion'])){?>
-        $("#tipo_doc").val('1');
-        $('.bloqueIE').hide();
-        <?php }
-        else if(in_array('7',$_SESSION['cSeccion'])){?>
-        $("#tipo_doc").val('2');
-        $('.bloqueIE').hide();
-        <?php }?>  
-
+        listar_expediente();
+        listar_categoria(1);
+        listar_categoria(2);
+        listar_categoria(3);
+        listar_categoria(4);
+        listar_categoria(5);
         
-        fecha_defecto();
-        $(".bloqueInterno").css("display","none");
-        $(".bloqueExterno").css("display","inline-block");
-        //crear calendario
-        $('#fecha_ini_icon').datepicker({
-            format: 'dd/mm/yyyy',
-            autoclose:true
-        });
-        $('#fecha_fin_icon').datepicker({
-            format: 'dd/mm/yyyy',
-            autoclose:true
-        });
-        $('#fecha').datepicker({
-            format: 'dd/mm/yyyy',
-            autoclose:true
-        });
-        $('#fecha_vencimiento').datepicker({
-            format: 'dd/mm/yyyy',
-            autoclose:true
-        });
         
-        var f = new Date();
-        var dia, mes;
-        if(f.getDate()<10) dia="0"+f.getDate(); else dia=f.getDate();
-        if(f.getMonth()<10) mes="0"+(f.getMonth()+1); else mes=(f.getMonth()+1);
-       
-        var fecha_def= dia+"/"+mes+ "/" + f.getFullYear();
-        
-        $("#fecha_vencimiento").val(sumaFecha(9,fecha_def));
-        
-        ocultar_botones();
+         
+       /* ocultar_botones();
         ocultar_botones0();
-        listar_documento();
-        listar_tipo();
-        listar_empresa();
+
 
         CKEDITOR.replace('editor1');
         CKEDITOR.replace('editor2');
@@ -375,10 +337,10 @@
             }
             });	
         });
-        
+        */
     });
     
-    $(document).on('change', '.btn-file :file', function() {
+    /*$(document).on('change', '.btn-file :file', function() {
         var input = $(this),
         numFiles = input.get(0).files ? input.get(0).files.length : 1,
         label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
@@ -429,57 +391,6 @@
         listar_tipo();
     });
     
-    function sumaFecha(d,fecha)
-    {
-    var Fecha = new Date();
-    var sFecha = fecha || (Fecha.getDate() + "/" + (Fecha.getMonth() +1) + "/" + Fecha.getFullYear());
-    var sep = sFecha.indexOf('/') != -1 ? '/' : '-'; 
-    var aFecha = sFecha.split(sep);
-    var fecha = aFecha[2]+'/'+aFecha[1]+'/'+aFecha[0];
-    fecha= new Date(fecha);
-    fecha.setDate(fecha.getDate()+parseInt(d));
-    var anno=fecha.getFullYear();
-    var mes= fecha.getMonth()+1;
-    var dia= fecha.getDate();
-    mes = (mes < 10) ? ("0" + mes) : mes;
-    dia = (dia < 10) ? ("0" + dia) : dia;
-    var fechaFinal = dia+sep+mes+sep+anno;
-    return (fechaFinal);
-    }
-    
-    function calcularFecha(){
-       var f = new Date();
-       var dia, mes;
-       if(f.getDate()<10) dia="0"+f.getDate(); else dia=f.getDate();
-       if(f.getMonth()<10) mes="0"+(f.getMonth()+1); else mes=(f.getMonth()+1);
-       
-       var fecha_def= dia+"/"+mes+ "/" + f.getFullYear();
-       
-       if($("#prioridad").val()=='1')
-           dias=9
-       else if($("#prioridad").val()=='2')
-           dias=6
-       else if($("#prioridad").val()=='3')
-           dias=3
-       
-       $("#fecha_vencimiento").val(sumaFecha(dias,fecha_def));
-    }
-    
-    function fecha_defecto(){
-        //fecha por defecto
-        var f = new Date();
-        var dia, mes;
-        if(f.getDate()<10) dia="0"+f.getDate(); else dia=f.getDate();
-        if(f.getMonth()<10) mes="0"+(f.getMonth()+1); else mes=(f.getMonth()+1);
-       
-        var fecha_def_ini= "01/"+mes+ "/" + f.getFullYear();
-        var fecha_def_fin= dia+"/"+mes+ "/" + f.getFullYear();
-        
-        $("#fecha_ini").val(fecha_def_ini);
-        $("#fecha_fin").val(fecha_def_fin);
-        $("#fecha").val(fecha_def_fin);
-    }
-    
     function listar_documento(){
         ocultar_botones();
         ocultar_botones0();
@@ -526,30 +437,7 @@
         });
         }
     }
-    
-    function listar_tipo(){
-        tipo_doc=$('#tipo_doc').val();
-        $('#tipo').empty();
-        $.ajax({
-	url : '<?php base_url()?>Maestro/listar_tipo',
-	data :'grupo='+tipo_doc,
-	type : 'POST',
-	success : function(result) {
-	var documento = eval(result); 
-            
-            $('#tipo').append($('<option>', { value: "0",text : "Seleccionar" })); 
-            
-            $.each(documento, function () {
-            $('#tipo').append($('<option>', { value: this.pkTipo,text : this.descripcion }));  
-            });
-            $("#tipo").select2("val", "0" );
-	},
-	error : function(request, xhr, status) {
-            alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
-	},
-        });
-    }
-    
+     
     function listar_estado(){
     var exists=0;
         $('#estado').empty();
@@ -591,42 +479,7 @@
         });
     }
     
-    function listar_accion(){
-        var exists=0;
-        var accion = $("#accionesk").val().split(',');
-        $('#form_movimiento #accion').empty();
-        $.ajax({
-	url : '<?php base_url()?>Maestro/listar_tipo',
-	data :'grupo=3',
-	type : 'POST',
-	success : function(result) {
-	var documento = eval(result); 
-            $.each(documento, function () {
-            $('#form_movimiento #accion').append($('<option>', { value: this.pkTipo,text : this.descripcion }));  
-            });
-            for(var i = 0; i < accion.length; i++)
-            {
-            $("#form_movimiento #accion > option[value='"+accion[i]+"']").attr("selected","selected");
-            }          
-            /*if($("#cod_movimiento").val()!=""){
-            $('#form_movimiento #accion option').each(function(){
-            if (this.value == $("#accionesk").val()) {
-                exists = 1;}
-            });
-            
-            if(exists=='0')
-            $("#form_movimiento #accion").select2("val", "0" );
-            else{$("#form_movimiento #accion").val($("#accionesk").val());}
-            }
-            else
-            $("#form_movimiento #accion").select2("val", "0" );*/
- 	},
-	error : function(request, xhr, status) {
-            alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
-	},
-        });
-    }
-    
+  
     function listar_empresa(){
         $('#entidad').empty();
         
@@ -1023,13 +876,49 @@
         $("#boton_descargar_d").show();
        
     }
-
+*/
+   
+    function listar_categoria(grupo){
+        $.ajax({
+	url : '<?php base_url()?>Legal/listar_categoria',
+	data :'grupo='+grupo,
+	type : 'POST',
+	success : function(result) {
+	var documento = eval(result); 
+            $.each(documento, function () {
+                if(grupo=='1')
+                $('#distrito').append($('<option>', { value: this.pkCategoria,text : this.descripcion })); 
+                else if(grupo=='2')
+                $('#organo').append($('<option>', { value: this.pkCategoria,text : this.descripcion }));  
+                else if(grupo=='3')
+                $('#especialidad').append($('<option>', { value: this.pkCategoria,text : this.descripcion }));  
+                else if(grupo=='4')
+                $('#sede').append($('<option>', { value: this.pkCategoria,text : this.descripcion }));  
+                else if(grupo=='5')
+                $('#sala').append($('<option>', { value: this.pkCategoria,text : this.descripcion })); 
+	});
+        },
+	error : function(request, xhr, status) {
+            alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
+	},
+        });
+    }
 </script>
 <section class="content-header">
     <div class="row">
-       	<div class="col-xs-5 col-sm-6 col-md-8 col-lg-8"><span style="font-size:18px;font-weight:bold">Expedientes Legales </span>      
+       	<div class="col-xs-5 col-sm-6 col-md-8 col-lg-8"><span style="font-size:18px;font-weight:bold">Expedientes Legales
+        </span>      
+            <div class="btn-group">
+                <select name="anio" id="anio"  class="form-control">
+                    <option <?php if(date('Y')=='2015')echo "selected"; ?> value="2015"> 2015 </option>
+                    <option <?php if(date('Y')=='2016')echo "selected"; ?> value="2016"> 2016 </option>
+                    <option <?php if(date('Y')=='2017')echo "selected"; ?> value="2017"> 2017 </option>
+                    <option <?php if(date('Y')=='2018')echo "selected"; ?> value="2017"> 2018 </option>
+                    <option <?php if(date('Y')=='2019')echo "selected"; ?> value="2017"> 2019 </option>
+                    <option <?php if(date('Y')=='2020')echo "selected"; ?> value="2017"> 2020 </option>
+                </select>
+            </div>
         </div>
-        
             <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4 bloqueExterno" align="right">
                 <?php if(in_array('8',$_SESSION['cOperador'])){?>  
                 <span id="boton_agregar" class="btn btn-primary" title="Agregar"   style="font-size:12px;" data-toggle="modal" data-target="#registrarDocumentoModal" onclick="$('#cod_documento').val('');$('#nro_tramite').val('');$('#textAccion').html('Registrar');$('#tabla_documento tr').removeClass('highlighted');ocultar_botones();$('.btn-limpiar1').css('display','inline-block');$('#boton_agregar_d').css('display','none');$('.btn-limpiar1').click();$('.btn-limpiar2').click();$('#cuerpoMovimiento').html('<tr><td colspan=6 align=center>No se encontraron resultados</td></tr>');">
@@ -1061,35 +950,10 @@
                     <i  class="fa fa-sitemap" ></i> 
                 </span>
                 <?php } ?>  
-            </div>
-        
-            <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4 bloqueInterno" align="right">
-                <?php if(in_array('15',$_SESSION['cOperador'])){?>  
-                <span id="boton_agregar0" class="btn btn-primary" title="Agregar"   style="font-size:12px;" data-toggle="modal" data-target="#registrarDocumentoModal" onclick="$('#cod_documento').val('');$('#nro_tramite').val('');$('#textAccion').html('Registrar');$('#tabla_documento tr').removeClass('highlighted');ocultar_botones0();$('.btn-limpiar1').css('display','inline-block');$('#boton_agregar_d').css('display','none');">
-                    <i  class="fa fa-plus" ></i> 
-                </span>
-                <?php } if(in_array('16',$_SESSION['cOperador'])){?>  
-                <span id="boton_editar0" class="btn btn-primary" title="Modificar" style="font-size:12px" data-toggle="modal" data-target="#registrarDocumentoModal" onclick="obtener_documento();" >
-                    <i  class="fa fa-pencil" ></i> 
-                </span>
-                <?php } if(in_array('17',$_SESSION['cOperador'])){?>  
-                <span id="boton_anular0" class="btn btn-primary" title="Anular"    id="anular"  style="font-size:12px" data-toggle="modal" data-target="#eliminarDocumentoModal" >
-                    <i  class="fa fa-minus-circle" ></i> 
-                </span>
-                <?php } if(in_array('18',$_SESSION['cOperador'])){?>  
-                <span id="boton_imprimir0" class="btn btn-primary" title="Imprimir"  id="imprimir" style="font-size:12px" >
-                    <i class="fa fa-print" ></i> 
-                </span>
-                <?php } if(in_array('19',$_SESSION['cOperador'])){?>  
-                <a href="#" target="_blank">
-                <span id="boton_descargar0" class="btn btn-primary" title="Descargar" id="imprimir" style="font-size:12px" >
-                    <i class="fa fa-download" ></i> 
-                </span></a>
-                <?php } if(in_array('20',$_SESSION['cOperador'])){?>  
-                <span id="boton_seguimiento0" class="btn btn-primary" title="Seguimiento"    id="seguimiento"  style="font-size:12px" data-toggle="modal" data-target="#arbolModal" >
+                
+                <span id="boton_seguimiento" class="btn btn-primary" title="Seguimiento"    id="seguimiento"  style="font-size:12px" data-toggle="modal" data-target="#arbolModal" >
                     <i  class="fa fa-sitemap" ></i> 
                 </span>
-                <?php } ?>  
             </div>
     </div>
 </section>
@@ -1101,64 +965,94 @@
             <div class="box box-primary">
                 <div class="box-header">
                     <div class="row">
-                        <div class="col-xs-12 col-sm-6 col-md-2 col-lg-5">
+                        <div class="col-xs-12 col-sm-4 col-md-2 col-lg-2">
                             <div class="form-group">
-                                <label>Concepto</label>
-                                <div class='input-group date'>
-                                <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-search"></span>
-                                </span>
+                                <label>Distrito Judicial</label>
+                                <div class='form-group'>
+                                <select name="distrito" id="distrito"  class="form-control" >
+                                <option value=""> Seleccionar </option>
+                                </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-xs-12 col-sm-4 col-md-2 col-lg-2">
+                            <div class="form-group">
+                                <label>Organo Juris.</label>
+                                <div class='form-group'>
+                                <select name="organo" id="organo"  class="form-control" >
+                                <option value=""> Seleccionar </option>
+                                </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-xs-12 col-sm-4 col-md-2 col-lg-2">
+                            <div class="form-group">
+                                <label>Especialidad</label>
+                                <div class='form-group'>
+                                <select name="especialidad" id="especialidad"  class="form-control" >
+                                <option value=""> Seleccionar </option>
+                                </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-xs-12 col-sm-4 col-md-2 col-lg-2">
+                            <div class="form-group">
+                                <label>Sede</label>
+                                <div class='form-group'>
+                                <select name="sede" id="sede"  class="form-control" >
+                                <option value=""> Seleccionar </option>
+                                </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-xs-12 col-sm-4 col-md-2 col-lg-2">
+                            <div class="form-group">
+                                <label>Sala/Juzgado</label>
+                                <div class='form-group'>
+                                <select name="sala" id="sala"  class="form-control" >
+                                <option value=""> Seleccionar </option>
+                                </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-4 col-md-2 col-lg-2">
+                            <div class="form-group">
+                                <label>N° Expediente</label>
+                                <div class='form-group'>
                                 <input type='text' name="search" id="search"  class="form-control" />
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">
+                      <!--  <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">
                             <div class="dataTables_length">
-                            </div>
-                        </div>
-			<div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">
-                            <div class="form-group">
-                                <label>Fecha Inicio</label>
-                                <div class='input-group date' id="fecha_ini_icon">
-                                <input readonly style='background-color:#eee' type='text' name="fecha_ini" id="fecha_ini"  class="form-control" />
-                                <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                                </span>
-                                </div>
-                            </div>
-                        </div>
-			<div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">
-                            <div class="form-group">
-                                <label>Fecha Fin</label>
-                                <div class='input-group date' id="fecha_fin_icon">
-                                <input readonly style='background-color:#eee' type='text' name="fecha_fin" id="fecha_fin"  class="form-control" />
-                                <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                                </span>
-                                </div>
                             </div>
                         </div>
                         <div class="col-xs-12 col-sm-6 col-md-1 col-lg-1">
                            
                             <div class="dataTables_length">
                                 <span class="btn btn-primary" title="Buscar" id="imprimir" style="font-size:12px;margin-top:22px" onclick="listar_documento()">
-                    <i class="fa fa-search" ></i> 
-                </span>
+                                <i class="fa fa-search" ></i> 
+                                </span>
                             </div>
                         </div>
-			
+			-->
                     </div>	
                 </div>
-                <div class="box-body pad table-responsive" style="overflow:scroll;height:380px" >
+                <div class="box-body pad table-responsive" style="overflow:scroll;height:680px" >
                     <table  id="tabla_documento" class="table table-bordered table-hover dataTable no-footer" role="grid" aria-describedby="tabla_inventario_info">
                         <thead>
                         <tr  class="cabecera">
-                            <th ><b>N. Trámite </b></th>
+                            <th ><b>N. </b></th>
+                            <th ><b>Código </b></th>
+                            <th ><b>Expediente </b></th>
+                            <th ><b>Involucrados </b></th>
                             <th ><b>Fecha </b></th>
-                            <th ><b>Tipo </b></th>
-                            <th ><b>N. Doc. </b></th>
-                            <th ><b>Entidad </b></th>
-                            <th ><b>Asunto </b></th>
+                            <th ><b>Resumen </b></th>
 		            <th ><b>Usuario </b></th>
                             <th ><b>Situación </b></th>
                         </tr>
@@ -1173,52 +1067,7 @@
             </div>
         </div><!-- /.col -->
     </div><!-- ./row -->
-    <div class="row">
-        <div class="col-md-12">
-            <div class="box box-primary">
-                <div class="box-header">
-                    <section class="content-header">
-                        <div class="row">
-                            <div class="col-xs-5 col-sm-6 col-md-8 col-lg-8"><span style="font-size:18px;font-weight:bold">Decretos</span></div>
-                                <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4" align="right">
-                                    <span id="boton_agregar_d" class="btn btn-success" title="Agregar"   style="display:none;font-size:12px" data-toggle="modal" data-target="#registrarDecretoModal" onclick="$('#cod_movimiento').val('');$('#textAccion2').html('Registrar');$('#tabla_movimiento tr').removeClass('highlighted');ocultar_botones_d();$('.btn-limpiar2').css('display','inline-block');">
-                                    <i  class="fa fa-plus" ></i> 
-                                    </span>
-                                    <span id="boton_editar_d" class="btn btn-success" title="Modificar" style="font-size:12px;display:none" data-toggle="modal" data-target="#registrarDecretoModal" onclick="obtener_movimiento();" >
-                                    <i  class="fa fa-pencil" ></i> 
-                                    </span>
-                                    <span id="boton_anular_d" class="btn btn-success" title="Anular" style="font-size:12px;display:none" data-toggle="modal" data-target="#eliminarMovimientoModal" >
-                                    <i  class="fa fa-minus-circle" ></i> 
-                                    </span>
-                                    <span id="boton_descargar_d" class="btn btn-success" title="Descargar" style="font-size:12px;display:none" >
-                                    <i  class="fa fa-download" ></i> 
-                                    </span>
-                                </div>
-                        </div>
-                    </section>
-                </div>
-                <div class="box-body pad table-responsive" style="overflow:scroll;height:230px">		
-                    <table id="tabla_movimiento" class="table table-bordered table-hover dataTable no-footer">
-			<thead>
-                        <tr class=cabecera>
-                            <th><b>N°</b> </th>
-                            <th><b>Destino</b> </th>
-                            <th><b>Gerente</b> </th>
-                            <th><b>Fecha</b> </th>
-                            <th><b>Vencimiento</b> </th>
-                            <th><b>Estado</b> </th>
-                        </tr>
-                        </thead>
-                        <tbody id="cuerpoMovimiento">
-                        <tr>
-                           <td colspan=6 align=center>No se encontraron resultados</td>
-                        </tr>
-                        </tbody>
-                    </table>		  
-                </div><!-- /.box -->
-            </div>
-        </div><!-- /.col -->
-    </div><!-- ./row -->
+
     <div class="modal fade" id="eliminarDocumentoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -1261,7 +1110,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header" >
-                <h1 class="modal-title" style="font-size:18px;font-weight:bold"><span id="textAccion"></span> Documento</h1>
+                <h1 class="modal-title" style="font-size:18px;font-weight:bold"><span id="textAccion"></span> Expediente</h1>
                 <span style="float:right;margin-top:-28px">
                 <span id="guardar" title="Guardar" class="btn btn-primary btn-insertar1" style="font-size:12px" >
                    <i class="fa fa-save"></i>
@@ -1619,7 +1468,7 @@
     </div>
    
     <div class="modal fade" id="arbolModal" tabindex="-1" role="dialog" aria-labelledby="Login" aria-hidden="true">
-        <div class="modal-dialog modal-md">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header" >
                 <h1 class="modal-title" style="font-size:18px;font-weight:bold">Seguimiento del Documento</h1>
