@@ -149,7 +149,7 @@
                 type : 'POST',
                 success : function(result) {
                     $(".btn-default-cerrar").click();
-                    $("#texto-green").html("Se registró el documento con N. Trámite: <font size='14px'><b>"+ result +"</b></font>");
+                    $("#texto-green").html("Se registró el documento con N. Trámite: <font size='3px'><b>"+ result +"</b></font>");
                     $("#alert-green").slideDown('slow');
                     listar_documento();
 					listar_documento_movimiento();
@@ -157,7 +157,7 @@
                     $(".btn-limpiar1").click();
                 },
                 error : function(request, xhr, status) {
-                alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
+                window.location = "http://" + location.host+"/std";
                 }
                 });	
             }
@@ -200,6 +200,9 @@
                     ocultarAlerta();
                     $(".btn-limpiar2").click();
                     }
+					else{
+						window.location = "http://" + location.host+"/std";
+					}
                 },
                 error : function(request, xhr, status) {
                 alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
@@ -228,9 +231,12 @@
                     listar_dependencia();
                     $("#detalle_unidad").val("");
                     }
+					else{
+						window.location = "http://" + location.host+"/std";
+					}
                 },
                 error : function(request, xhr, status) {
-                alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
+                window.location = "http://" + location.host+"/std";
                 }
                 });	
             }
@@ -296,9 +302,11 @@
                     $("#detalle_materno2").val("");
                     $("#detalle_nombre2").val("");
                     }
+					else
+						window.location = "http://" + location.host+"/std";
                 },
                 error : function(request, xhr, status) {
-                alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
+                window.location = "http://" + location.host+"/std";
                 }
                 });	
             }
@@ -355,9 +363,11 @@
 				listar_documento_movimiento();
                 ocultarAlerta();
                 }
+				else
+					window.location = "http://" + location.host+"/std";
             },
             error : function(request, xhr, status) {
-                alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
+                window.location = "http://" + location.host+"/std";
             }
             });	
         });
@@ -377,9 +387,12 @@
                 detalle_documento($("#cod_documento").val(),$("#nro_tramite").val());
                 ocultarAlerta();
                 }
+				else{
+					window.location = "http://" + location.host+"/std";
+				}
             },
             error : function(request, xhr, status) {
-                alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
+                window.location = "http://" + location.host+"/std";
             }
             });	
         });

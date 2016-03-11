@@ -10,7 +10,6 @@ class Documento extends CI_Controller {
         parent::__construct();
         $this->load->model('documento_model'); 
 		$this->load->library('session');
-		if (!isset($_SESSION['usuario'])) {echo '<script type="text/javascript">window.location="../std";</script>';}
         }
 
 	public function index()
@@ -286,7 +285,7 @@ class Documento extends CI_Controller {
                 ->setCellValue('F'.$i, $v->dependencia)
                 ->setCellValue('G'.$i, strtoupper($v->asunto))
                 ->setCellValue('H'.$i, $v->dependenciaMovimiento)
-                ->setCellValue('I'.$i, $v->nroTramiteMovimiento)
+                ->setCellValue('I'.$i, $v->nroMemo)
                 ->setCellValue('J'.$i, (is_null($v->fechaMovimiento) ? "":date('d/m/Y',strtotime($v->fechaMovimiento))))
                 ->setCellValue('K'.$i, $v->estadoMovimiento);
             $i=$i+1;

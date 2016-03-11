@@ -82,6 +82,9 @@
                     $("#alert-green").slideDown('slow');
                     ocultarAlerta();
                     }
+					else{
+						window.location = "http://" + location.host+"/std";
+					}
                 },
                 error : function(request, xhr, status) {                
                 $("#texto-red").html("Error : "+status+' '+xhr.responseText+ ' - '+ request);
@@ -108,8 +111,10 @@
                     $("#texto-green").html("Se realizó el cierre correctamente");
                     $("#alert-green").slideDown('slow');
                     ocultarAlerta();
-                    
                     }
+					else{
+						window.location = "http://" + location.host+"/std";
+					}
                 },
                 error : function(request, xhr, status) {                
                 $("#texto-red").html("Error : "+status+' '+xhr.responseText+ ' - '+ request);

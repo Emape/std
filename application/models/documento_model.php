@@ -93,7 +93,7 @@ class documento_model extends CI_Model{
 	
     
     public function listarDocumentoMovimiento($filter,$filter_not){
-        $this->db_1->select('CONCAT(pe.nombre, " ",pe.apellidoPaterno, " ",pe.apellidoMaterno) as gerente,d.*,m.fechaCreada as fechaMovimiento,b.descripcion as estadoMovimiento,"" as nroTramiteMovimiento, a.descripcion as dependenciaMovimiento,m.pkDependencia,m.pkDocumento,e.pkEmpresa,e.ruc,e.razonSocial,e.estado,t.descripcion as tipo, s.descripcion as situacion,de.descripcion as dependencia');
+        $this->db_1->select('m.nroMemo,CONCAT(pe.nombre, " ",pe.apellidoPaterno, " ",pe.apellidoMaterno) as gerente,d.*,m.fechaCreada as fechaMovimiento,b.descripcion as estadoMovimiento,"" as nroTramiteMovimiento, a.descripcion as dependenciaMovimiento,m.pkDependencia,m.pkDocumento,e.pkEmpresa,e.ruc,e.razonSocial,e.estado,t.descripcion as tipo, s.descripcion as situacion,de.descripcion as dependencia');
         $this->db_1->from($this->table_1.' d');
         $this->db_1->join($this->table_2.' e','e.pkEmpresa=d.pkEmpresa');
         $this->db_1->join($this->table_3.' t','t.pkTipo=d.pkTipo');

@@ -148,8 +148,11 @@
 
 				if(this.estado=='1')
 				$("#checks"+this.pkOperador).prop('checked',true);
-				else
+				else if(this.estado='0')
 				$("#checks"+this.pkOperador).prop('checked',false);	
+				else
+				window.location = "http://" + location.host+"/std";
+					
             });
         },
         error : function(request, xhr, status) {
@@ -168,7 +171,10 @@
         type : 'POST',
 		data : "codigo="+$("#cod_usuario").val()+"&p1="+p1+"&p2="+p2+"&p3="+p3+"&p4="+p4+"&estado="+estado,
         success : function(result) {
+			if(result='1')
 			console.log(result);	
+			else
+			window.location = "http://" + location.host+"/std";
         },
         error : function(request, xhr, status) {
             alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
