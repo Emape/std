@@ -290,6 +290,7 @@ class Maestro extends CI_Controller {
         
         $var   = $this->maestro_model->listarAsistenciaMensual($filter,$filter_not);
         
+		//print_r($var);die;
         $this->load->library('session');
         
         //style 
@@ -343,8 +344,8 @@ class Maestro extends CI_Controller {
         $val_ruc="";
         $vruc="";
         foreach($var as $key => $v ){
-            if($val_ruc!=$v->ruc){
-            $val_ruc=$v->ruc;
+            if($val_ruc!=$v->id){
+            $val_ruc=$v->id;
             if($v->asistio=='1'){ $asistir="Asistió"; $conta++;} else {$asistir="Faltó";}
             
             if($v->apellidoPaterno!="")
@@ -362,10 +363,10 @@ class Maestro extends CI_Controller {
                 ->setCellValue('G'.$i, $v->tiempo2)
                 ->setCellValue('H'.$i, $v->observacion);*/
             $i=$i+1;
+			
             $total++;
             }
         }
-        //print_R($var);die;
         $o=6;$d="";
         foreach($var as $k => $w ){
             
@@ -408,7 +409,7 @@ class Maestro extends CI_Controller {
            else if($w->dias=='28'){$dia28=$d;$obj->setActiveSheetIndex(0)->setCellValue('AF'.$o, $dia28);}
            else if($w->dias=='29'){$dia29=$d;$obj->setActiveSheetIndex(0)->setCellValue('AG'.$o, $dia29);}
            else if($w->dias=='30'){$dia30=$d;$obj->setActiveSheetIndex(0)->setCellValue('AH'.$o, $dia30);}
-           else if($w->dias=='31'){$dia31=$d;$obj->setActiveSheetIndex(0)->setCellValue('NI'.$o, $dia31);}
+           else if($w->dias=='31'){$dia31=$d;$obj->setActiveSheetIndex(0)->setCellValue('AI'.$o, $dia31);}
            
         }
         $obj->setActiveSheetIndex(0)
@@ -424,5 +425,70 @@ class Maestro extends CI_Controller {
         $objWriter->save('php://output');  //send it to user, of course you can save it to disk also!
         exit;
         }
-    
+		
+	public function registrar_organo(){
+        $detalle_organo=$this->input->get_post('detalle_organo');
+          
+        $filter     = new stdClass();
+        $filter_not = new stdClass();
+            
+        $filter->detalle=$detalle_organo;
+		$filter->grupo='2'; 
+            
+        $this->maestro_model->registrarMaestroLegal($filter,$filter_not);
+            
+        echo "1";
+    }
+	
+	public function registrar_especialidad(){
+        $detalle_especialidad=$this->input->get_post('detalle_especialidad');
+          
+        $filter     = new stdClass();
+        $filter_not = new stdClass();
+            
+        $filter->detalle=$detalle_especialidad;
+		$filter->grupo='3'; 
+            
+        $this->maestro_model->registrarMaestroLegal($filter,$filter_not);
+            
+        echo "1";
+    }
+	
+	public function registrar_sede(){
+        $detalle_sede=$this->input->get_post('detalle_sede');
+          
+        $filter     = new stdClass();
+        $filter_not = new stdClass();
+            
+        $filter->detalle=$detalle_sede;
+        $filter->grupo='4'; 
+            
+        $this->maestro_model->registrarMaestroLegal($filter,$filter_not);
+            
+        echo "1";
+    }
+	public function registrar_sala(){
+        $detalle_sala=$this->input->get_post('detalle_sala');
+          
+        $filter     = new stdClass();
+        $filter_not = new stdClass();
+            
+        $filter->detalle=$detalle_sala;
+        $filter->grupo='5'; 
+            
+        $this->maestro_model->registrarMaestroLegal($filter,$filter_not);
+            
+        echo "1";
+    }   
+	public function notificacion_legal(){
+            
+        $notif=$this->maestro_model->notificacionLegal();
+		if(count((array)$notif)>0) echo json_encode($notif); else echo 0;
+    }   
+
+	public function listar_notificacion_legal(){
+            
+        $notif=$this->maestro_model->listarNotificacionLegal();
+		if(count((array)$notif)>0) echo json_encode($notif); else echo 0;
+    }	
 }

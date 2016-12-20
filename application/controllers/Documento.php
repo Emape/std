@@ -19,11 +19,18 @@ class Documento extends CI_Controller {
             $this->load->view('documento/index');
 	}
         
-        public function expediente()
+	public function expediente()
 	{   
             $this->load->library('session');
             $this->load->helper('url');
             $this->load->view('documento/expediente');
+	}
+	
+	public function recepcion()
+	{   
+            $this->load->library('session');
+            $this->load->helper('url');
+            $this->load->view('documento/recepcion');
 	}
         
         public function listar_documento(){
@@ -94,6 +101,7 @@ class Documento extends CI_Controller {
         }
         
         public function registrar_documento(){
+			$var=0;
             $cod_documento=$this->input->get_post('cod_documento');
             $tipo_doc=$this->input->get_post('tipo_doc');
             $tipo=$this->input->get_post('tipo');
@@ -105,6 +113,16 @@ class Documento extends CI_Controller {
             $asunto=$this->input->get_post('asunto');
             $areaTrabajo=$this->input->get_post('areaTrabajo');
 			$nro_tramite=$this->input->get_post('nro_tramite');
+			
+			//**//
+			$unidad0=$this->input->get_post('unidad0');
+            $fecha_vencimiento0=$this->input->get_post('fecha_vencimiento0');
+            $responsable00=$this->input->get_post('responsable00');
+            $estado0=$this->input->get_post('estado0');
+            $tipo0=$this->input->get_post('tipo0');
+            $memo0=$this->input->get_post('memo0');
+            $acciones0=$this->input->get_post('acciones0');
+			$prioridad0=$this->input->get_post('prioridad0');
 
             $filter     = new stdClass();
             $filter_not = new stdClass();
@@ -122,9 +140,32 @@ class Documento extends CI_Controller {
 			$filter->nroTramite=$nro_tramite;
             
             if($cod_documento==""){
+			$filter->unidad0=$unidad0;
+            $filter->fecha_vencimiento0=str_replace('/', '-', $fecha_vencimiento0);
+            $filter->responsable00=$responsable00;
+            $filter->estado0=$estado0;
+            $filter->tipo0=$tipo0;
+            $filter->memo0=$memo0;
+            $filter->accion0=$acciones0;
+			$filter->prioridad0=$prioridad0;
+			
+			if($tipo_doc=="1"){
+			$verify=$this->documento_model->verificarNro($filter,$filter_not);
+			
+			$oNroDocumento=explode('-', $nroDocumento);
+			foreach ($verify as $row)
+			{
+			if($row->nro==$oNroDocumento[0])
+			$var=2;
+			}
+			
+			}
+			
+			if($var!=2)	
             $var=$this->documento_model->registrarDocumento($filter,$filter_not);
             }
             else{
+			if($var!=2)	
             $var=$this->documento_model->modificarDocumento($filter,$filter_not);    
             }
             
@@ -242,8 +283,8 @@ class Documento extends CI_Controller {
         
         $this->load->library('session');
         
-        if($doc==1) {$tipo_doc="INTERNOS";}
-        else        {$tipo_doc="EXTERNOS";}
+        if($doc==1) {$tipo_doc="DOCUMENTOS INTERNOS";}
+        else        {$tipo_doc="DOCUMENTOS EXTERNOS";}
         
         //style 
         
@@ -254,15 +295,45 @@ class Documento extends CI_Controller {
             )
         )
         );
+		
+		$style_cabecera = array(
+		'font' => array(
+			'bold' => true,
+			'size' => 12,
+		),
+		'alignment' => array(
+        'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+		),
+		'borders' => array(
+        'top' => array(
+            'style' => PHPExcel_Style_Border::BORDER_THIN,
+        ),
+		),
+		);
+		
+		$style_blanco =     array(
+        'font' => array(
+            'type' => PHPExcel_Style_Fill::FILL_SOLID,
+            'color' => array('rgb' => 'FFFFFF')
+        ),
+		'borders' => array(
+        'left' => array(
+            'style' => PHPExcel_Style_Border::BORDER_THIN ,
+      'color' => array(
+              'rgb' => '3a2a47'
+            )
+        )
+    ),
+		);
         
         //load Excel template file
         $obj = PHPExcel_IOFactory::load("./plantilla/plantilla02.xlsx");
         $obj->setActiveSheetIndex(0);  //set first sheet as active
 
-        $obj->getActiveSheet()->setCellValue('B4', $ini." al ".$fin);  
-        $obj->getActiveSheet()->setCellValue('B5', $tipo_doc);  
-        $obj->getActiveSheet()->setCellValue('B6', strtoupper($_SESSION['gerencia']));  
-        $obj->getActiveSheet()->setCellValue('F4', $_SESSION['nombre']." ".$_SESSION['apellidoPaterno']." ".$_SESSION['apellidoMaterno']); 
+        $obj->getActiveSheet()->setCellValue('C4', $ini." al ".$fin);  
+        $obj->getActiveSheet()->setCellValue('C5', $tipo_doc);  
+        $obj->getActiveSheet()->setCellValue('J5', strtoupper($_SESSION['gerencia']));  
+        $obj->getActiveSheet()->setCellValue('J4', $_SESSION['nombre']." ".$_SESSION['apellidoPaterno']." ".$_SESSION['apellidoMaterno']); 
         
         $filter     = new stdClass();
         $filter_not = new stdClass();
@@ -273,11 +344,26 @@ class Documento extends CI_Controller {
         $filter->flaguser="1";
         
         $var   = $this->documento_model->listarDocumentoMovimiento($filter,$filter_not);
-        $i     = 9;
-        
+        $i     = 8;
+		$ii     = 8;
+        $detalle_dependencia="";
         foreach($var as $key => $v ){
+			$dias	= (strtotime(date("Y-m-d"))-strtotime($v->fechaMovimiento))/86400;
+			$dias 	= abs($dias); $dias = floor($dias);	
+		
+		if($v->dependenciaMovimiento!=$detalle_dependencia){
+			
+			$obj->getActiveSheet()->mergeCells('A'.$i.':G'.$i);
+			$obj->getActiveSheet()->getStyle('A'.$i.':L'.$i)->applyFromArray($style_cabecera);
+			$obj->getActiveSheet()->mergeCells('H'.$i.':L'.$i);
+			$obj->getActiveSheet()->getStyle('H'.$i.':H'.$i)->applyFromArray($style_blanco);
+			$obj->setActiveSheetIndex(0)
+            ->setCellValue('A'.$i, $v->dependenciaMovimiento)->setCellValue('H'.$i, $v->dependenciaMovimiento);
+			$i=$i+1;
+		}	
+		
             $obj->setActiveSheetIndex(0)
-                ->setCellValue('A'.$i, ($i-8))
+                ->setCellValue('A'.$i, ($ii-7))
                 ->setCellValue('B'.$i, $v->nroTramite)
                 ->setCellValue('C'.$i, date('d/m/Y',  strtotime($v->fechaCreada)))    
                 ->setCellValue('D'.$i, $v->tipo)
@@ -287,10 +373,15 @@ class Documento extends CI_Controller {
                 ->setCellValue('H'.$i, $v->dependenciaMovimiento)
                 ->setCellValue('I'.$i, $v->nroMemo)
                 ->setCellValue('J'.$i, (is_null($v->fechaMovimiento) ? "":date('d/m/Y',strtotime($v->fechaMovimiento))))
-                ->setCellValue('K'.$i, $v->estadoMovimiento);
-            $i=$i+1;
+				->setCellValue('K'.$i, $v->estadoMovimiento)
+				->setCellValue('L'.$i, (is_null($v->fechaMovimiento) ? "":$dias." días"));
+						
+		$i=$i+1;
+		$ii=$ii+1;
+		$detalle_dependencia=$v->dependenciaMovimiento;
+		
         }
-        $obj->getActiveSheet()->getStyle('A9:K'.($i-1))->applyFromArray($style_border);
+        $obj->getActiveSheet()->getStyle('A8:L'.($i-1))->applyFromArray($style_border);
         //prepare download
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="tramite_documentario.xls"');
@@ -302,7 +393,7 @@ class Documento extends CI_Controller {
         }
         
         public function hoja_tramite(){ 
-        
+
         $doc=$this->input->get_post('doc');
         $nrodoc=$this->input->get_post('nrodoc');
         $ini=$this->input->get_post('ini');

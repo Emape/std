@@ -26,6 +26,11 @@
     <script>
     	    jQuery.noConflict();
     	    $(document).ready(function(){
+				$("#minim_chat_window").click();
+				setInterval('validarSesion()',120000);
+				//listar_chat($("#conta_chat").val());
+				//setInterval('listar_ver_msj()',100000);
+				
     	        $.ajaxSetup({
     	            'beforeSend': function (xhr) {
     	                xhr.overrideMimeType('text/html; charset=UTF-8');
@@ -50,8 +55,81 @@
                     );
     	            return false;
     	        });   
+				
+				notificacion_legal();
+				
+				listar_notificacion_legal();
         });
-        
+		
+        function notificacion_legal(){
+			$("#notif_hoy").html(0);
+			$("#notif_ayer").html(0);
+				var i=0;var cant=0;
+			    $.ajax({
+                url  : '<?php base_url()?>Maestro/notificacion_legal',
+                type : 'POST',
+                success : function(result) {
+					var documento = eval(result); 
+					$.each(documento,function(){
+					if(i==0)
+					$("#notif_hoy").html(this.cantidad);
+					else
+					$("#notif_ayer").html(this.cantidad);
+					
+					cant=cant+(this.cantidad*1);
+					i++;
+					});   
+
+					$(".notif_tot").html(cant);
+					
+					
+					
+                },
+                error : function(request, xhr, status) {
+                alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
+                }
+                });			
+		}
+		
+		function listar_notificacion_legal(){
+				var i=1;var j=1;var html = "";var html0 = "";
+			    $.ajax({
+                url  : '<?php base_url()?>Maestro/listar_notificacion_legal',
+                type : 'POST',
+                success : function(result) {
+					var documento = eval(result); 
+					$.each(documento,function(){
+				
+					if(this.fechaProgramada=='<?php echo date("Y-m-d");?>'){
+					html += "<tr >";
+					html += "<td>" + i + "</td>";
+					html += "<td>" + this.detalle_actividad + "</td>";
+					html += "<td>" + this.detalle_acto + "</td>";
+					html += "<td>" + this.sumilla + "</td>";
+					html += "<td>" + this.fechaProgramada + "</td>";
+					html += "</tr>";i++;
+					}
+					else{
+					html0 += "<tr >";
+					html0 += "<td>" + j + "</td>";
+					html0 += "<td>" + this.detalle_actividad + "</td>";
+					html0 += "<td>" + this.detalle_acto + "</td>";
+					html0 += "<td>" + this.sumilla + "</td>";
+					html0 += "<td>" + this.fechaProgramada + "</td>";
+					html0 += "</tr>";j++;
+					}
+					
+					});   
+
+					$("#cuerpoN1").html(html === "" ? " <tr><td colspan='5' align=center>No se encontraron resultados</td></tr>" : html);
+					$("#cuerpoN2").html(html0 === "" ? " <tr><td colspan='5' align=center>No se encontraron resultados</td></tr>" : html0);
+                },
+                error : function(request, xhr, status) {
+                alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
+                }
+                });			
+		}
+		
         //chat js
         
         $(document).on('click', '.panel-heading span.icon_minim', function (e) {
@@ -85,6 +163,26 @@ $(document).on('click', '.icon_close', function (e) {
     //$(this).parent().parent().parent().parent().remove();
     $( "#chat_window_1" ).remove();
 });
+
+function validarSesion(){/*
+	var user="<?php echo $_SESSION['usuario']?>";
+	if(user==""){
+		window.location = "http://" + location.host;
+	}*/
+		//listar_chat($("#conta_chat").val());
+			
+		$.ajax({
+        url : '<?php base_url()?>acceso/verificar_sesion',
+        type : 'POST',
+        success : function(result) {
+            if(result!='1')
+				location.reload();
+        },
+        error : function(request, xhr, status) {
+            alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
+        }
+        });
+}
     </script>
     
     <style>
@@ -245,19 +343,54 @@ $(document).on('click', '.icon_close', function (e) {
           <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
               <!-- User Account Menu -->
+			  <?php if(in_array('47',$_SESSION['cOperador'])){?>
+			  <li class="dropdown notifications-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+              <i class="fa fa-bell-o"></i>
+              <span class="label label-warning"><i class="notif_tot">0</i></span>
+            </a>
+            <ul class="dropdown-menu">
+			
+              <li class="header">Tu tienes <i class="notif_tot"></i> notificacion(es)</li>
+              <li>
+                <!-- inner menu: contains the actual data -->
+                <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 200px;"><ul class="menu" style="overflow: hidden; width: 100%; height: 200px;">
+                  
+				  <li>
+                    <a href="#" data-toggle="modal" data-target="#notificacionModal">
+                      <i class="fa fa-warning text-red"></i> <span id="notif_hoy"></span> Pendiente(s)
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" data-toggle="modal" data-target="#notificacionModal">
+                      <i class="fa fa-warning text-yellow"></i> <span id="notif_ayer"></span> Pendiente(s)
+                    </a>
+                  </li>
+                  
+                </ul><div class="slimScrollBar" style="width: 3px; position: absolute; top: 0px; opacity: 0.4; display: block; border-radius: 7px; z-index: 99; right: 1px; background: rgb(0, 0, 0);"></div><div class="slimScrollRail" style="width: 3px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; opacity: 0.2; z-index: 90; right: 1px; background: rgb(51, 51, 51);"></div></div>
+              </li>
+			
+              <!--<li class="footer"><a href="#">View all</a></li>-->
+            </ul>
+			</li>
+			  <?php } ?>
               <li class="dropdown user user-menu" id="square-profile">
                 <!-- Menu Toggle Button -->
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <!-- The user image in the navbar-->
                   <img src="<?php base_url()?>images/user.png" class="user-image" alt="User Image"/>
                   <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                  <span class="hidden-xs"><?php echo "Bienvenido(a) ".$_SESSION['nombre'];?></span>
+				  
+                  <span class="hidden-xs"><?php  if($_SESSION['pkDependencia']=="3") echo "Bienvenido(a) ".$_SESSION['email']; else if($_SESSION['nombre']!="") echo "Bienvenido(a) ".$_SESSION['nombre']; else echo "Bienvenido(a) ".$_SESSION['razonSocial'];
+				  
+				  ?></span>
                 </a>
                 <ul class="dropdown-menu">
                   <!-- The user image in the menu -->
                   <li class="user-header">
                     <img src="<?php base_url()?>images/user.png" class="img-circle" alt="User Image" />
-                    <p><?php echo $_SESSION['nombre'].' '.$_SESSION['apellidoPaterno'].' '.$_SESSION['apellidoMaterno'];?><small>Código: <?php echo str_pad($_SESSION['codigo'], 6, '0', STR_PAD_LEFT);?></small>
+                    <p><?php if($_SESSION['pkDependencia']=="3") echo "Bienvenido(a) ".$_SESSION['email']; else if($_SESSION['nombre']!="") echo $_SESSION['nombre'].' '.$_SESSION['apellidoPaterno'].' '.$_SESSION['apellidoMaterno']; else echo $_SESSION['razonSocial'];?>
+					<small>Código: <?php echo str_pad($_SESSION['codigo'], 6, '0', STR_PAD_LEFT);?></small>
                     </p>
                   </li>
                   <li class="user-footer">
@@ -319,10 +452,12 @@ $(document).on('click', '.icon_close', function (e) {
                 <?php } if(in_array('3',$_SESSION['cMenu'])){?>  
                 <li class="treeview">
                 <a href="#"><span>LEGAL</span> <i class="fa fa-angle-left pull-right"></i></a>
-                <ul class="treeview-menu">
-                <li><a href="./documento/expediente" class="ajaxmenu"><i class="fa fa-legal"></i><span> Expedientes</span>  
+				<ul class="treeview-menu">
+				<?php  if(in_array('26',$_SESSION['cSubmenu'])){?>
+				<li><a href="./documento/expediente" class="ajaxmenu"><i class="fa fa-legal"></i><span> Expedientes</span>  
                 </a>	      
-		</li>
+				</li>
+				<?php } ?>
                 </ul>
                 </li>
                 <?php } if(in_array('4',$_SESSION['cMenu'])){?>  
@@ -343,8 +478,78 @@ $(document).on('click', '.icon_close', function (e) {
                 <?php }?>  
                 
             </ul><!-- /.sidebar-menu -->
+
         </section>
         <!-- /.sidebar -->
+		
     </aside>
     
-    
+    	<div class="modal fade" id="notificacionModal" role="dialog" aria-labelledby="Login" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header" >
+                <h1 class="modal-title" style="font-size:18px;font-weight:bold"> Notificaciones </h1>
+                <span style="float:right;margin-top:-28px">
+                <span data-dismiss="modal" aria-label="Close" class="btn btn-default btn-default-cerrar-organo" style="font-size:12px" >
+                   <i class="fa fa-close"></i>
+                </span>
+                </span>
+                </div>
+                <div class="modal-body">
+				
+	<label style="color:red">Actividades Vencidas</label><br> 			
+	<div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary">
+                <div class="box-body pad table-responsive">
+                    <table  id="tabla_n1" class="table table-bordered table-hover dataTable no-footer" role="grid" aria-describedby="tabla_inventario_info">
+                        <thead>
+                        <tr  class="cabecera">
+                            <th ><b>N. </b></th>
+                            <th ><b>Actividad </b></th>
+                            <th ><b>Acto </b></th>
+                            <th ><b>Sumilla </b></th>
+                            <th ><b>Fecha Programada </b></th>
+                        </tr>
+                        </thead>
+                        <tbody id="cuerpoN1">
+						<tr>
+                            <td  colspan="5" align="center">No se encontraron resultados </td>
+                        </tr>	    
+                        </tbody>	
+                    </table>
+                </div><!-- /.box -->
+            </div>
+        </div><!-- /.col -->
+    </div><!-- ./row -->
+	
+	<label style="color:#D69C32">Actividades por Vencer</label><br> 			
+	<div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary">
+                <div class="box-body pad table-responsive">
+                    <table  id="tabla_n2" class="table table-bordered table-hover dataTable no-footer" role="grid" aria-describedby="tabla_inventario_info">
+                        <thead>
+                        <tr  class="cabecera">
+                            <th ><b>N. </b></th>
+                            <th ><b>Actividad </b></th>
+                            <th ><b>Acto </b></th>
+                            <th ><b>Sumilla </b></th>
+                            <th ><b>Fecha Programada </b></th>
+                        </tr>
+                        </thead>
+                        <tbody id="cuerpoN2">
+						<tr>
+                            <td  colspan="5" align="center">No se encontraron resultados </td>
+                        </tr>	    
+                        </tbody>	
+                    </table>
+                </div><!-- /.box -->
+            </div>
+        </div><!-- /.col -->
+    </div><!-- ./row -->
+					
+                </div>   
+            </div>
+        </div>
+    </div>

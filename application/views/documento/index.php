@@ -45,25 +45,25 @@
             format: 'dd/mm/yyyy',
             autoclose:true
         });
-        
+		$('#fecha_vencimiento0').datepicker({
+            format: 'dd/mm/yyyy',
+            autoclose:true
+        });
         var f = new Date();
         var dia, mes;
         if(f.getDate()<10) dia="0"+f.getDate(); else dia=f.getDate();
-        if(f.getMonth()<10) mes="0"+(f.getMonth()+1); else mes=(f.getMonth()+1);
+        if((f.getMonth()*1+1)<10) mes="0"+(f.getMonth()+1); else mes=(f.getMonth()+1);
        
         var fecha_def= dia+"/"+mes+ "/" + f.getFullYear();
         
         $("#fecha_vencimiento").val(sumaFecha(3,fecha_def));
-        
+        $("#fecha_vencimiento0").val(sumaFecha(3,fecha_def));
         ocultar_botones();
         ocultar_botones0();
         listar_documento();
-		listar_documento_movimiento();
         listar_tipo();
         listar_empresa();
 
-        CKEDITOR.replace('editor1');
-        CKEDITOR.replace('editor2');
         
         $("#boton_imprimir").click(function(){
             doc=$('#tipo_doc').val();
@@ -97,6 +97,7 @@
             url : '<?php base_url()?>Documento/arbol',
             data :'nrodoc='+nrodoc+'&doc='+doc+'&ini='+ini+'&fin='+fin,
             type : 'POST',
+
             success : function(result) {
                 $("#arbol").html(result);
             },
@@ -107,6 +108,9 @@
         });
         
         $(".btn-insertar1").click(function(){
+			
+			
+			
             if($("#form_documento #tipo").val()=="0"){
                 $("#texto-yellow").html("Seleccione el Tipo Documento");
                 $("#alert-yellow").slideDown('slow');
@@ -143,24 +147,36 @@
                 ocultarAlerta();
             }
             else{
-                $.ajax({
+				$("#acciones0").val($("#form_documento #accion0").val());
+				
+				
+				$.ajax({
                 url  : '<?php base_url()?>Documento/registrar_documento',
-                data : "tipo_doc="+$('#tipo_doc').val()+"&nro_tramite="+$('#nro_tramite').val()+"&cod_documento="+$('#cod_documento').val()+"&areaTrabajo="+CKEDITOR.instances['editor1'].getData()+ "&"+$('#form_documento').serialize(),
+                data : "tipo_doc="+$('#tipo_doc').val()+"&nro_tramite="+$('#nro_tramite').val()+"&cod_documento="+$('#cod_documento').val()+"&areaTrabajo=''&"+$('#form_documento').serialize(),
                 type : 'POST',
                 success : function(result) {
-                    $(".btn-default-cerrar").click();
+					if(result=='2'){
+
+                    $("#texto-red").html("El número de documento ya existe.");
+                    $("#alert-red").slideDown('slow');
+                    ocultarAlerta();
+					}else{
+						 $(".btn-default-cerrar").click();
                     $("#texto-green").html("Se registró el documento con N. Trámite: <font size='3px'><b>"+ result +"</b></font>");
                     $("#alert-green").slideDown('slow');
                     listar_documento();
-					listar_documento_movimiento();
+					//listar_documento_movimiento();
                     ocultarAlerta();
                     $(".btn-limpiar1").click();
+					}
+                   
                 },
                 error : function(request, xhr, status) {
-                window.location = "http://" + location.host+"/std";
+					//alert(request, xhr, status)
+                           window.location = "http://" + location.host+"/std";
                 }
                 });	
-            }
+					}
         });
         
         $(".btn-insertar2").click(function(){
@@ -175,11 +191,7 @@
                 $("#alert-yellow").slideDown('slow');
                 ocultarAlerta();
             }
-            else if($("#form_movimiento #accion").val()==null){
-                $("#texto-yellow").html("Seleccione Acciones");
-                $("#alert-yellow").slideDown('slow');
-                ocultarAlerta();
-            }
+
             else if($("#form_movimiento #fechaVencimiento").val()==""){
                 $("#texto-yellow").html("Seleccione la Fecha de Vencimiento");
                 $("#alert-yellow").slideDown('slow');
@@ -188,15 +200,16 @@
             else{
                 $.ajax({
                 url  : '<?php base_url()?>Documento/registrar_movimiento',
-                data : "cod_documento="+$('#cod_documento').val()+"&cod_movimiento="+$('#cod_movimiento').val()+"&areaTrabajo="+CKEDITOR.instances['editor2'].getData()+ "&"+$('#form_movimiento').serialize(),
+                data : "cod_documento="+$('#cod_documento').val()+"&cod_movimiento="+$('#cod_movimiento').val()+"&areaTrabajo=''&"+$('#form_movimiento').serialize(),
                 type : 'POST',
                 success : function(result) {
                     if(result=='1'){
                     $(".btn-default-cerrar").click();
                     $("#texto-green").html("Se registró el movimiento correctamente");
                     $("#alert-green").slideDown('slow');
-                    listar_documento();
-					listar_documento_movimiento();
+                    //listar_documento();
+
+					detalle_documento($("#cod_documento").val(),$("#nro_tramite").val(),'<?php echo $_SESSION['usuario'];?>');
                     ocultarAlerta();
                     $(".btn-limpiar2").click();
                     }
@@ -218,9 +231,10 @@
                 ocultarAlerta();
             }
             else{
+				var nombre_unidad=encodeURIComponent($('#detalle_unidad').val());
                 $.ajax({
                 url  : '<?php base_url()?>Maestro/registrar_unidad',
-                data : "detalle_unidad="+$('#detalle_unidad').val()+"&entidad="+$('#entidad').val(),
+                data : "detalle_unidad="+nombre_unidad+"&entidad="+$('#entidad').val(),
                 type : 'POST',
                 success : function(result) {
                     if(result=='1'){
@@ -232,11 +246,11 @@
                     $("#detalle_unidad").val("");
                     }
 					else{
-						window.location = "http://" + location.host+"/std";
+						//window.location = "http://" + location.host+"/std";
 					}
                 },
                 error : function(request, xhr, status) {
-                window.location = "http://" + location.host+"/std";
+                //window.location = "http://" + location.host+"/std";
                 }
                 });	
             }
@@ -298,6 +312,7 @@
                     $("#alert-green").slideDown('slow');
                     ocultarAlerta();
                     listar_persona_m();
+
                     $("#detalle_paterno2").val("");
                     $("#detalle_materno2").val("");
                     $("#detalle_nombre2").val("");
@@ -315,38 +330,37 @@
         $('#boton_agregar_d').click(function(){
             $('#tramite').val($('#nro_tramite').val());
             listar_dependencia_m();
-            listar_estado();
-            listar_accion();
         });
         
         $(".btn-limpiar1").click(function(){
-        $("#form_documento #tipo").select2("val", "0" );
-        $("#form_documento #entidad").select2("val", "0" );
         $("#form_documento #groupUnidad").css("display","none");
         $("#form_documento #groupPersona").css("display","none");
         $("#nroDocumento").val("");
         $("#form_documento #asunto").val("");
-        
-        CKEDITOR.instances.editor1.setData("");
-        fecha_defecto();
+        fecha_defecto();		
+		$("#form_documento #tipo").select2("val", "0" );
+        $("#form_documento #entidad").select2("val", "0" );
         });
         
         $(".btn-limpiar2").click(function(){
-        $('#prioridad > option[value="1"]').attr('selected', 'selected');   
-        $("#form_movimiento #unidad").select2("val", "0" );
-        $("#form_movimiento #responsable").select2("val", "0" );  
-        $("#form_movimiento #estado").select2("val", "0" );
-		$("#form_movimiento #tipo2").select2("val", "0" )		
-        $("#form_movimiento #memo").val("");
-        $('#form_movimiento #accion').select2("val", "" );
+	
+        $('#prioridad > option[value="1"]').attr('selected', 'selected');  
+		$("#form_movimiento #memo").val("");
         $("#form_movimiento #decreto").val("");
 		$("#form_movimiento #responsable2").val("");
         $("#form_movimiento #ampliacion").val("");
         $("#form_movimiento #asunto").val("");
-        CKEDITOR.instances.editor2.setData("");
         calcularFecha();
+		
+		$("#form_movimiento #unidad").select2("val", "0" );
+        $("#form_movimiento #responsable").select2("val", "0" );  
+        $("#form_movimiento #estado").select2("val", "0" );
+		$("#form_movimiento #tipo2").select2("val", "0" );		
+        $('#form_movimiento #accion').select2("val", "" );
         });
         
+		
+		
         $(".btn-eliminar1").click(function(){
             nrodoc=$('#cod_documento').val();
 
@@ -360,7 +374,7 @@
                 $("#texto-green").html("Se eliminó el documento correctamente");
                 $("#alert-green").slideDown('slow');
                 listar_documento();
-				listar_documento_movimiento();
+				//listar_documento_movimiento();
                 ocultarAlerta();
                 }
 				else
@@ -397,16 +411,6 @@
             });	
         });
         
-    });
-    
-    $(document).on('change', '.btn-file :file', function() {
-        var input = $(this),
-        numFiles = input.get(0).files ? input.get(0).files.length : 1,
-        label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-        input.trigger('fileselect', [numFiles, label]);
-    });
-
-    $(document).ready( function() {
         $('.btn-file :file').on('fileselect', function(event, numFiles, label) {
         var input = $(this).parents('.input-group').find(':text'),
             log = numFiles > 1 ? numFiles + ' files selected' : label;
@@ -426,7 +430,71 @@
         $("#search_move").keyup(function () {
         $.uiTableFilter(theTable1, this.value);
         });
+		
+		/*------------Inicio boton agregar-----------*/    
+		$(".evento_agregar").click(function(){
+		/*---------------Internos-------------*/	
+		if($("#tipo_doc").val()=='1'){	
+		$('#cod_documento').val('');
+		$('#nro_tramite').val('');
+		$('#textAccion').html('Registrar');
+		$('#tabla_documento tr').removeClass('highlighted');
+		ocultar_botones0();
+		$('.btn-limpiar1').css('display','inline-block');
+		$('#boton_agregar_d').css('display','none');
+		$('#responsables').val('');
+		$('.btn-insertar1').show();
+		$('#add').val('1');
+		$('#ocultoResponsable').hide();
+		$('#primerDecreto').show();
+		$('#form_documento #groupUnidad').css('display','block');
+		
+		$('#form_documento #entidad').select2("val","1");
+		//$('#form_documento #entidad > option[value="1"]').attr('selected', 'selected');
+		//limpiar();
+		}
+		/*---------------Externos-------------*/
+		else if($("#tipo_doc").val()=='2'){	
+		$('#cod_documento').val('');
+		$('#nro_tramite').val('');
+		$('#textAccion').html('Registrar');
+		$('#tabla_documento tr').removeClass('highlighted');
+		$('.btn-limpiar1').css('display','inline-block');
+		$('#boton_agregar_d').css('display','none');
+		$('#cuerpoMovimiento').html('<tr><td colspan=7 align=center>No se encontraron resultados</td></tr>');
+		$('#responsables').val('');
+		$('.btn-insertar1').show();
+		$('#add').val('');
+		$('#primerDecreto').hide();
+		ocultar_botones();
+		
+		$('.btn-limpiar1').click();
+		//$('.btn-limpiar2').click();
+		/*limpiar2();*/
+		}
+		
+		var f = new Date();
+        var dia, mes;
+        if(f.getDate()<10) dia="0"+f.getDate(); else dia=f.getDate();
+        if((f.getMonth()*1+1)<10) mes="0"+(f.getMonth()+1); else mes=(f.getMonth()+1);
+       
+        var fecha_def= dia+"/"+mes+ "/" + f.getFullYear();
+		$('#form_documento #fecha').val(fecha_def);
+		
+		
+		});
+		/*------------Fin boton agregar-----------*/    
+		
     });
+    
+    $(document).on('change', '.btn-file :file', function() {
+        var input = $(this),
+        numFiles = input.get(0).files ? input.get(0).files.length : 1,
+        label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+        input.trigger('fileselect', [numFiles, label]);
+    });
+	
+
     
     $('.btn-toggle').click(function() {
         $(this).find('.btn').toggleClass('active');  
@@ -434,7 +502,7 @@
     	$(this).find('.btn').toggleClass('btn-primary');
         if($("#tipo_doc").val()=='2'){
             $("#tipo_doc").val('1');
-            $("#area_trabajo").css("display","block");
+            $("#area_trabajo").css("display","none");
             $(".bloqueExterno").css("display","none");
             $(".bloqueInterno").css("display","inline-block");
         }
@@ -452,8 +520,7 @@
         ocultar_botones0();
         ocultar_botones_d();
         listar_documento();
-		listar_documento_movimiento();
-        listar_tipo();
+		//listar_documento_movimiento();
     });
     
     function sumaFecha(d,fecha)
@@ -478,7 +545,7 @@
        var f = new Date();
        var dia, mes;
        if(f.getDate()<10) dia="0"+f.getDate(); else dia=f.getDate();
-       if(f.getMonth()<10) mes="0"+(f.getMonth()+1); else mes=(f.getMonth()+1);
+       if((f.getMonth()<10)*1+1) mes="0"+(f.getMonth()+1); else mes=(f.getMonth()+1);
        
        var fecha_def= dia+"/"+mes+ "/" + f.getFullYear();
        
@@ -490,27 +557,40 @@
            dias=9
        
        $("#fecha_vencimiento").val(sumaFecha(dias,fecha_def));
+	   
+	   if($("#prioridad0").val()=='1')
+           dias=3
+       else if($("#prioridad0").val()=='2')
+           dias=6
+       else if($("#prioridad0").val()=='3')
+           dias=9
+       
+       $("#fecha_vencimiento0").val(sumaFecha(dias,fecha_def));
     }
     
 	function obtener_nro(){
-		if($("#form_documento #tipo2").val()!="0" && $("#form_documento #unidad").val()!="0" && $("#tipo_doc").val()=="1" && $("#add").val()!=""){	
+		if($("#form_documento #tipo").val()!="0" && $("#form_documento #unidad").val()!="0" && $("#form_documento #unidad").val()!=null && $("#form_documento #tipo").val()!=0 && $("#tipo_doc").val()=="1" && $("#add").val()!="" && $("#cod_movimiento").val()==""){	
 			$.ajax({
             url : '<?php base_url()?>Documento/obtener_nro_tipodoc',
             data :'tipo='+$("#form_documento #tipo").val()+'&unidad='+$("#form_documento #unidad").val(),
             type : 'POST',
             success : function(result) {
-				
+			
 			var documento = eval(result); 
             var html = "";
 			var cnro=0;
 			var siglas="";
             $.each(documento, function () {
-				siglas=this.siglas;
-				if(cnro==null || cnro==0)
-					cnro="0001";
-				
-				if(cnro<this.nro)
-					cnro=this.nro;
+			if(this.siglas!=null)
+			siglas=this.siglas;
+
+			xnro=this.nro;
+			
+			if(xnro==null || xnro=="")
+				xnro=1;
+			
+
+			if(cnro*1<xnro*1){	cnro=xnro;}
 			});
 					nrodoc=String("0000" + cnro).slice(-4);
 			$("#form_documento #nroDocumento").val(nrodoc+"-"+<?php echo date('Y');?>+"-EMAPE/"+siglas);
@@ -524,7 +604,8 @@
 	}
 	
 	function obtener_nro2(){
-		if($("#form_movimiento #tipo2").val()!="0" && $("#form_movimiento #unidad").val()!="0" && $("#edit").val()!=""){	
+		if($("#form_movimiento #tipo2").val()!="0" && $("#form_movimiento #unidad").val()!="0" && $("#edit").val()!="" && $("#cod_movimiento").val()!=""){	
+
 			$.ajax({
             url : '<?php base_url()?>Documento/obtener_nro_tipodoc',
             data :'tipo='+$("#form_movimiento #tipo2").val()+'&unidad='+$("#form_movimiento #unidad").val(),
@@ -535,13 +616,17 @@
             var html = "";
             var cnro=0;
             var siglas="";
-            $.each(documento, function () {
+                       $.each(documento, function () {
+				if(this.siglas!=null)
 				siglas=this.siglas;
-				if(cnro==null || cnro==0)
-					cnro="0001";
+
+			xnro=this.nro;
+			
+			if(this.nro==null || this.nro=="")
+				xnro=1;
+			
+			if(cnro*1<xnro*1){	cnro=xnro;}
 				
-				if(cnro<this.nro)
-					cnro=this.nro;
 			});
 				
 			nrodoc=String("0000" + cnro).slice(-4);
@@ -552,36 +637,50 @@
                 alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
             }
             });	
+			
 		}
+		
+		
+		if($("#form_movimiento #unidad").val()!="0" && $("#form_movimiento #unidad").val()!="null")
+		$(".btn-insertar-persona2").show();
+		else
+			$(".btn-insertar-persona2").hide();
+		
 	}
 	
     function fecha_defecto(){
         //fecha por defecto
         var f = new Date();
         var dia, mes;
-        if(f.getDate()<10) dia="0"+f.getDate(); else dia=f.getDate();
-        if(f.getMonth()<10) mes="0"+(f.getMonth()+1); else mes=(f.getMonth()+1);
-       
+        if((f.getDate()*1)<10) dia="0"+f.getDate(); else dia=f.getDate();
+        if((f.getMonth()+1*1)<10) mes="0"+(f.getMonth()+1); else mes=(f.getMonth()+1);
+   
         var fecha_def_ini= "01/"+mes+ "/" + f.getFullYear();
         var fecha_def_fin= dia+"/"+mes+ "/" + f.getFullYear();
         
         $("#fecha_ini").val(fecha_def_ini);
         $("#fecha_fin").val(fecha_def_fin);
         $("#fecha").val(fecha_def_fin);
+		
+		//console.log(fecha_def_fin);
     }
     
     function listar_documento(){
-        ocultar_botones();
+		ocultar_botones();
         ocultar_botones0();
         ocultar_botones_d();
+		
         $("#nro_tramite").val("");
         $("#cuerpoMovimiento").html("<tr><td colspan='7' align=center>No se encontraron resultados</td></tr>");
 	
         var fecha_ini=$("#fecha_ini").val();
         var fecha_fin=$("#fecha_fin").val();
         var tipo_doc=$("#tipo_doc").val();
-        
-        if(fecha_fin < fecha_ini){
+
+		xini=$("#fecha_ini").val().substr(6,4)+"-"+$("#fecha_ini").val().substr(3,2)+"-"+$("#fecha_ini").val().substr(0,2);
+		xfin=$("#fecha_fin").val().substr(6,4)+"-"+$("#fecha_fin").val().substr(3,2)+"-"+$("#fecha_fin").val().substr(0,2);
+		
+        if(xfin < xini){
             $("#texto-yellow").html("La fecha fin debe ser mayor o igual que la fecha inicio");
             $("#alert-yellow").slideDown('slow');
             ocultarAlerta();
@@ -593,6 +692,7 @@
 	url : '<?php base_url()?>Documento/listar_documento',
 	data :'fecha_ini='+fecha_ini+'&fecha_fin='+fecha_fin+'&tipo_doc='+tipo_doc,
 	type : 'POST',
+	dataType: "json",
 	success : function(result) {
 	var documento = eval(result); 
             var html = "";
@@ -635,9 +735,10 @@
 	url : '<?php base_url()?>Documento/listar_documento_movimiento',
 	data :'fecha_ini='+fecha_ini+'&fecha_fin='+fecha_fin+'&tipo_doc='+tipo_doc,
 	type : 'POST',
-	success : function(result) {
+	success : function(result) {alert
 	var documento = eval(result); 
             var html = "";
+			if(documento!=0){
             $.each(documento, function () {
 			if(this.dependenciaMovimiento==null){dependencia="";}
 			else { dependencia=this.dependenciaMovimiento; }
@@ -657,12 +758,10 @@
             html += "<td>" + this.tipo +": " + this.nroDocumento +"</td>";
             html += "<td>" + this.dependencia + "</td>";
             html += "<td>" + this.asunto + "</td>";
-            html += "<td>" + dependencia + " - " + gerente + "</td>";
-			html += "<td>" + fechaMovimiento.substr(0,10) + "</td>";
-            html += "<td>" + estadoMovimiento + "</td>";
+
             html += "</tr>";
             });
-
+			}
             $("#cuerpoDocumentoMovimiento").html(html === "" ? " <tr><td colspan='8' align=center>No se encontraron resultados</td></tr>" : html);
 	},
 	error : function(request, xhr, status) {
@@ -672,140 +771,85 @@
         }
     }
     
+	/*----------Inicio listar tipo----------*/
     function listar_tipo(){
-        tipo_doc=$('#tipo_doc').val();
+        var tipo_doc=$('#tipo_doc').val();
+		var exists=0;
+		
         $('#tipo').empty();
+		$('#tipo0').empty();	
+        
+        $('#form_movimiento #accion').empty();
+		$('#form_documento #accion0').empty();
+        $('#estado').empty();$('#estado0').empty();
+		
         $.ajax({
 	url : '<?php base_url()?>Maestro/listar_tipo',
-	data :'grupo='+tipo_doc,
+	data :'grupo=0',
 	type : 'POST',
 	success : function(result) {
 	var documento = eval(result); 
-            
+			/*---------Inicializar los valores--------*/
+            $('#tipo0').append($('<option>', { value: "0",text : "Seleccionar" })); 
             $('#tipo').append($('<option>', { value: "0",text : "Seleccionar" })); 
 			$('#tipo2').append($('<option>', { value: "0",text : "Seleccionar" })); 
+			$('#estado').append($('<option>', { value: "0",text : "Seleccionar" })); 
+            $('#estado0').append($('<option>', { value: "0",text : "Seleccionar" })); 
             
+			/*--------listar accion, estado , tipo----------*/
             $.each(documento, function () {
+			if(this.grupo=='1' || this.grupo=='2'){
+			$('#tipo0').append($('<option>', { value: this.pkTipo,text : this.descripcion })); 
             $('#tipo').append($('<option>', { value: this.pkTipo,text : this.descripcion }));  
-			$('#tipo2').append($('<option>', { value: this.pkTipo,text : this.descripcion }));  
-            });
-            $("#tipo").select2("val", "0" );
-			$("#tipo2").select2("val", "0" );
+			$('#tipo2').append($('<option>', { value: this.pkTipo,text : this.descripcion })); 
+			}
+			else if(this.grupo=='3'){
+			$('#form_movimiento #accion').append($('<option>', { value: this.pkTipo,text : this.descripcion })); 
+			$('#form_documento #accion0').append($('<option>', { value: this.pkTipo,text : this.descripcion }));
+			}
+			else if(this.grupo=='4'){
+			$('#estado0').append($('<option>', { value: this.pkTipo,text : this.descripcion })); 
+            $('#estado').append($('<option>', { value: this.pkTipo,text : this.descripcion }));
+			}
+            });	
 	},
 	error : function(request, xhr, status) {
-            alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
+        alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
 	},
-        });
+    });
     }
-    
-    function listar_estado(){
-    var exists=0;
-        $('#estado').empty();
-        $.ajax({
-	url : '<?php base_url()?>Maestro/listar_tipo',
-	data :'grupo=4',
-	type : 'POST',
-	success : function(result) {
-	var documento = eval(result); 
-            
-            $('#estado').append($('<option>', { value: "0",text : "Seleccionar" })); 
-            
-            $.each(documento, function () {
-            $('#estado').append($('<option>', { value: this.pkTipo,text : this.descripcion }));  
-            });
-          
-            
-            if($("#cod_movimiento").val()!=""){
-            $('#estado option').each(function(){
-            if (this.value == $("#estadok").val()) {
-                exists = 1;}
-            });
-            
-            if(exists=='0')
-            $("#estado").select2("val", "62" );
-            else
-            $("#estado").select2("val", $("#estadok").val());
-            
-            }
-            else
-            $("#estado").select2("val", "62" );
-            
-            
-            
-	},
-	error : function(request, xhr, status) {
-            alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
-	},
-        });
-    }
-    
-    function listar_accion(){
-        var exists=0;
-        var accion = $("#accionesk").val().split(',');
-        $('#form_movimiento #accion').empty();
-        $.ajax({
-	url : '<?php base_url()?>Maestro/listar_tipo',
-	data :'grupo=3',
-	type : 'POST',
-	success : function(result) {
-	var documento = eval(result); 
-            $.each(documento, function () {
-            $('#form_movimiento #accion').append($('<option>', { value: this.pkTipo,text : this.descripcion }));  
-            });
-            for(var i = 0; i < accion.length; i++)
-            {
-            $("#form_movimiento #accion > option[value='"+accion[i]+"']").attr("selected","selected");
-            }          
-            /*if($("#cod_movimiento").val()!=""){
-            $('#form_movimiento #accion option').each(function(){
-            if (this.value == $("#accionesk").val()) {
-                exists = 1;}
-            });
-            
-            if(exists=='0')
-            $("#form_movimiento #accion").select2("val", "0" );
-            else{$("#form_movimiento #accion").val($("#accionesk").val());}
-            }
-            else
-            $("#form_movimiento #accion").select2("val", "0" );*/
- 	},
-	error : function(request, xhr, status) {
-            alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
-	},
-        });
-    }
-    
+	
+	/*----------Inicio listar empresa----------*/
     function listar_empresa(){
         $('#entidad').empty();
-        
+		$('#entidad').append($('<option>', { value: "0",text : "Seleccionar" })); 
         $.ajax({
-	url : '<?php base_url()?>Maestro/listar_empresa',
-	type : 'POST',
-	success : function(result) {
-	var documento = eval(result); 
-            
-            $('#entidad').append($('<option>', { value: "0",text : "Seleccionar" })); 
-            
+		url : '<?php base_url()?>Maestro/listar_empresa',
+		type : 'POST',
+		success : function(result) {
+		var documento = eval(result); 
             $.each(documento, function () {
             $('#entidad').append($('<option>', { value: this.pkEmpresa,text : this.razonSocial }));  
             });
-            $("#entidad").select2("val", "0" );
-	},
-	error : function(request, xhr, status) {
+			
+		},
+		error : function(request, xhr, status) {
             alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
-	},
+		},
         });
     }
-    
+    /*----------Fin listar empresa----------*/
+	
     function listar_dependencia(){
         if($("#form_documento entidad").val()=='0') $("#agregar_unidad").css("display","none");
-        else $("#agregar_unidad").css("display","inline-block");
+        else {$("#agregar_unidad").css("display","inline-block");
         $("#cod_entidad").val($("#entidad option:selected").text());
         
         var entidad=$("#entidad").val();
         $("#groupUnidad").css("display","none");
         $("#groupPersona").css("display","none");
         $('#unidad').empty();
+		$('#unidad0').empty();
         $.ajax({
 	url : '<?php base_url()?>Maestro/listar_dependencia',
 	data :'empresa='+entidad,
@@ -814,9 +858,11 @@
 	var documento = eval(result); 
         var exists = 0;    
             $('#unidad').append($('<option>', { value: "0",text : "Seleccionar" })); 
+			$('#unidad0').append($('<option>', { value: "0",text : "Seleccionar" })); 
             
             $.each(documento, function () {
-            $('#unidad').append($('<option>', { value: this.pkDependencia,text : this.descripcion }));  
+            $('#unidad').append($('<option>', { value: this.pkDependencia,text : this.descripcion }));
+			$('#unidad0').append($('<option>', { value: this.pkDependencia,text : this.descripcion }));			
             });
             
             if($("#cod_documento").val()!=""){
@@ -824,15 +870,25 @@
             if (this.value == $("#dependenciak").val()) {
                 exists = 1;}
             });
+			
+			$('#unidad0 option').each(function(){
+            if (this.value == $("#dependenciak").val()) {
+                exists = 1;}
+            });
             
-            if(exists=='0')
+            if(exists=='0'){
             $("#unidad").select2("val", "0" );
-            else
+			$("#unidad0").select2("val", "0" );
+			}
+            else{
             $("#unidad").select2("val", $("#dependenciak").val());
-            
+            $("#unidad0").select2("val", $("#dependenciak").val());
+			}
             }
-            else
+            else{
             $("#unidad").select2("val", "0" );
+			$("#unidad0").select2("val", "0" );
+			}
 
             $("#groupUnidad").css("display","block");
                 
@@ -841,6 +897,7 @@
             alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
 	},
         });
+		}
     }
     
     function listar_dependencia_m(){
@@ -880,12 +937,14 @@
     }
     
     function listar_persona_m(){
+		
         if($("#form_movimiento #unidad").val()=='0') $("#agregar_persona2").css("display","none");
-        else $("#agregar_persona2").css("display","inline-block");
+        else{ $("#agregar_persona2").css("display","inline-block");
         $("#cod_unidad2").val($("#form_movimiento #unidad option:selected").text());
     
         var exists='0';
         $('#form_movimiento #responsable').empty();
+		
         var unidad=$("#form_movimiento #unidad").val();
         $.ajax({
 	url : '<?php base_url()?>Maestro/listar_persona',
@@ -898,7 +957,9 @@
             $('#form_movimiento #responsable').append($('<option>', { value: "0",text : "Seleccionar" })); 
             $.each(documento, function () {
             
-            if(this.apellidoPaterno!='')
+            if(this.email!='')
+            $('#form_movimiento #responsable').append($('<option>', { value: this.pkPersona,text : this.email }));  
+			else if(this.apellidoPaterno!='')
             $('#form_movimiento #responsable').append($('<option>', { value: this.pkPersona,text : this.apellidoPaterno+' '+this.apellidoMaterno+' '+this.nombre }));  
             else
             $('#form_movimiento #responsable').append($('<option>', { value: this.pkPersona,text : this.razonSocial }));  
@@ -923,11 +984,61 @@
             alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
 	},
         });
+		}
     }
     
+	    function listar_persona_m0(){
+        if($("#form_documento #unidad0").val()=='0') $("#agregar_persona2").css("display","none");
+        else{ $("#agregar_persona2").css("display","inline-block");
+        $("#cod_unidad2").val($("#form_movimiento #unidad option:selected").text());
+    
+        var exists='0';
+        $('#form_documento #responsable00').empty();
+		
+        var unidad=$("#form_documento #unidad0").val();
+        $.ajax({
+	url : '<?php base_url()?>Maestro/listar_persona',
+	data :'dependencia='+unidad,
+	type : 'POST',
+	success : function(result) {
+	var documento = eval(result); 
+        //var exists = 0;  
+                  
+            $('#form_documento #responsable00').append($('<option>', { value: "0",text : "Seleccionar" })); 
+            $.each(documento, function () {
+            
+            if(this.apellidoPaterno!='')
+            $('#form_documento #responsable00').append($('<option>', { value: this.pkPersona,text : this.apellidoPaterno+' '+this.apellidoMaterno+' '+this.nombre }));  
+            else
+            $('#form_documento #responsable00').append($('<option>', { value: this.pkPersona,text : this.razonSocial }));  
+     
+            });
+            
+            if($("#form_documento #responsable00").val()!=""){
+            $('#form_documento #responsable00 option').each(function(){
+            if (this.value == $("#mpersonak").val()) {
+                exists = 1;}
+            });
+            
+            if(exists=='0')
+            $("#form_documento #responsable00").select2("val", "0" );
+            else
+            $("#form_documento #responsable00").select2("val", $("#mpersonak").val());
+            }
+            else
+            $("#form_documento #responsable00").select2("val", "0" );
+	},
+	error : function(request, xhr, status) {
+            alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
+	},
+        });
+		}
+    }
+	
     function listar_persona(){
         if($("#unidad").val()=='0') $("#agregar_persona").css("display","none");
-        else $("#agregar_persona").css("display","inline-block");
+        else{
+		$("#agregar_persona").css("display","inline-block");
         $("#cod_unidad").val($("#unidad option:selected").text());
         
         var unidad=$("#unidad").val();
@@ -939,8 +1050,8 @@
 	type : 'POST',
 	success : function(result) {
 	var documento = eval(result); 
-        var exists = 0;  
-                  
+			var exists = 0;  
+            var vcargo=0;      
             $('#persona').append($('<option>', { value: "0",text : "Seleccionar" })); 
             $("#persona").select2("val", "0");
             $.each(documento, function () {
@@ -950,31 +1061,46 @@
             else
             $('#persona').append($('<option>', { value: this.pkPersona,text : this.razonSocial }));  
      
-            
+            if(this.cargo==1)
+				vcargo=this.pkPersona;
+			
             });
-            
+            //console.log(vcargo);
             if($("#cod_documento").val()!=""){
             $('#persona option').each(function(){
             if (this.value == $("#personak").val()) {
                 exists = 1;}
             });
-            
             if(exists=='0')
             $("#persona").select2("val", "0" );
             else
             $("#persona").select2("val", $("#personak").val());
+           
             
+
             }
             else
             $("#persona").select2("val", "0" );
         
             $("#groupPersona").css("display","block");
+
+			$("#personak").val(vcargo);
             
 	},
 	error : function(request, xhr, status) {
             alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
 	},
+		complete: 
+            function() {
+				if($("#personak").val()!="")
+				$("#persona").select2("val", $("#personak").val());
+			else
+				$("#persona").select2("val", "0" );
+				
+            }
+	
         });
+	}
     }
     
     function ocultarAlerta(){
@@ -987,6 +1113,7 @@
     }     
     
     function detalle_documento(cod,tramite,user) {
+		
         $('#tabla_documento tr').removeClass('highlighted');
         $("#fila" + cod).addClass('highlighted');
         $("#cod_documento").val(cod);
@@ -999,6 +1126,7 @@
         ocultar_botones_d();
         $("#boton_agregar_d").show();
         $("#cuerpoMovimiento").fadeIn(1000).html("<tr><td colspan='7' align='center'><img src='<?php base_url();?>images/loader.gif' ></td></tr>");
+
         $.ajax({
 	url : '<?php base_url()?>Documento/listar_movimiento',
 	data :'cod='+cod,
@@ -1008,12 +1136,14 @@
             var html = "";
             var i=1;
             $.each(documento, function () {
+				
+				
 				if(this.tipo=='ATENDIDO')
 					xtipo=1;
 				else
 					xtipo=0;
 				fechaCreada=this.fechaCreada.substr(0,11);
-            html += "<tr id='filad" + this.pkMovimiento + "' onclick=detalle_movimiento('" + this.pkMovimiento +"','"+ i + "','" + this.acciones +"','" + this.usuarioCreador +"','" + xtipo +"','" + this.pkDependencia +"') >";
+            html += "<tr id='filad" + this.pkMovimiento + "' onclick=detalle_movimiento('" + this.pkMovimiento +"','"+ i + "','" + this.acciones +"','" + this.usuarioCreador +"','" + xtipo +"','" + this.pkDependencia +"','"+this.nroMemo+"') >";
             html += "<td>" + i + "</td>";
             html += "<td>" + this.dependencia + "</td>";
 			if(this.gerente == null)
@@ -1033,10 +1163,15 @@
             alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
 	},
         });
-
+		
+		obtener_documento();$('#add').val('');$('#primerDecreto').hide();
+		
+		// Agregar Decreto
+	$('#form_movimiento #estado').select2('val','62');$('.btn-insertar2').show();$('.btn-insertar2').show();$('#form_movimiento #unidad').prop('disabled',false);$('#form_movimiento #accion').prop('disabled',false);$('#form_movimiento #prioridad').prop('disabled',false);$('#form_movimiento #fecha_vencimiento').prop('disabled',false);
     }  
     
     function obtener_documento(){
+	$('#ocultoResponsable').show();
     $('#textAccion').html('Modificar');
     $('.btn-limpiar1').css("display","none");
     
@@ -1060,12 +1195,11 @@
             $("#form_documento #fecha").val(this.fechaDocumento.substring(8,10)+'/'+this.fechaDocumento.substring(5,7)+'/'+this.fechaDocumento.substring(0,4));
             $("#form_documento #tipo").select2("val", this.pkTipo );
             $("#form_documento #entidad").select2("val", this.pkEmpresa );
+			
             //$("#form_documento #unidad").select2("val", this.pkDependencia );
             //$("#form_documento #persona").select2("val", this.pkPersona );
+			//setTimeout(alert( this.pkPersona ), 2000000);
 
-            CKEDITOR.instances.editor1.setData(this.areaTrabajo);
-            
-            
             });       
         },
 	error : function(request, xhr, status) {
@@ -1075,8 +1209,9 @@
     }
     
     function obtener_movimiento(){
-    //listar_persona_m();
-        
+	var $accionc = $("#form_movimiento #accion").select2();
+	$accionc.val(null).trigger("change");
+	
     $('#textAccion2').html('Modificar');
     $('.btn-limpiar2').css("display","none");
     $("#tramite").val($("#nro_tramite").val());
@@ -1090,9 +1225,8 @@
 	success : function(result) {
 	var documento = eval(result); 
             $.each(documento, function () {
+			$("#form_movimiento #tipo2").select2("val", this.pkTipo );
             $("#estadok").val(this.situacion);
-            
-            //$("#accionesk").val(this.acciones);
             $("#mdependenciak").val(this.pkDependencia);
             $("#mpersonak").val(this.pkPersona);
             $("#form_movimiento #accion").select2({tags:true});
@@ -1101,46 +1235,105 @@
             $("#form_movimiento #estado").select2("val", this.situacion );
             $("#form_movimiento #unidad").select2("val", this.pkDependencia );
             $("#form_movimiento #responsable").select2("val", this.pkDependencia );
-            $("#form_movimiento #tipo2").select2("val", this.pkTipo );
+            
             $("#form_movimiento #fecha_vencimiento").val(this.fechaVencimiento.substring(8,10)+'/'+this.fechaVencimiento.substring(5,7)+'/'+this.fechaVencimiento.substring(0,4));
             $("#form_movimiento #memo").val(this.nroMemo);
 			$("#form_movimiento #responsable2").val(this.responsable);
             $("#form_movimiento #ampliacion").val(this.ampliacion);
             $("#form_movimiento #decreto").val(this.decreto);
-            $("#form_movimiento #asunto").val(this.asunto);
-            CKEDITOR.instances.editor2.setData(this.areaTrabajo);
-            
+            $("#form_movimiento #asunto").val(this.asunto); 
             });   
-            
-    
-    
         },
 	error : function(request, xhr, status) {
             alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
 	},
         });
-    }
-    
-    function detalle_movimiento(pkMovimiento,i,acciones,user, estado,dependencia) {
+		
+			
+			
+			var accion = $("#accionesk").val().split(',');
+			$accionc.val([accion[0],accion[1],accion[2],accion[3],accion[4],accion[5]]).trigger("change");
+			/*for(var i = 0; i < accion.length; i++)
+            {
+            $("#form_movimiento #accion > option[value='"+accion[i]+"']").attr("selected","selected");
+			cad+=eval(accion[i])+',';
+            */
 
+			
+    }
+	
+	function limpiar(){
+		$("#responsable2").val("" );
+		$("#form_documento #unidad").select2("val", "<?php echo $_SESSION['pkDependencia'];?>");
+		$("#nroDocumento").val("");
+		$("#memo").val("");
+		$("#memo0").val("");
+		$("#asunto").val("");
+		ocultar_botones_d();
+		$('#cuerpoMovimiento').html('<tr><td colspan=7 align=center>No se encontraron resultados</td></tr>');
+		var f = new Date();
+        var dia, mes;
+        if(f.getDate()<10) dia="0"+f.getDate(); else dia=f.getDate();
+        if((f.getMonth()*1+1)<10) mes="0"+(f.getMonth()+1); else mes=(f.getMonth()+1);
+       
+        var fecha_def= dia+"/"+mes+ "/" + f.getFullYear();
+		$('#form_documento #fecha').val(fecha_def);
+		
+		
+		
+		
+		$("#accion0").select2("val", "0" );
+		$("#accion").select2("val", "0" );
+		$("#estado").select2("val", "62" );
+		$("#tipo").select2("val", "0" );
+		$("#responsable").select2("val", "0" );
+		$("#estado0").select2("val", "62" );
+		$("#tipo0").select2("val", "0" );
+		$("#unidad0").select2("val", "0" );
+		$("#responsable00").select2("val", "0" );
+		
+		
+		
+	}
+	
+	function limpiar2(){
+		$("#responsable2").val("");
+		$("#nroDocumento").val("");
+		$("#memo").val("");
+		$("#memo0").val("");
+		$("#asunto").val("");		
+		ocultar_botones_d();
+		
+		
+		$("#accion0").select2("val", "0" );
+		$("#accion").select2("val", "0" );
+		$("#estado0").select2("val", "62" );
+		$("#tipo0").select2("val", "0" );
+		$("#unidad").select2("val", '<?php echo $_SESSION['pkDependencia'];?>' );
+		$("#responsable").select2("val", "0" );
+		$("#estado").select2("val", "62" );
+		$("#tipo").select2("val", "0" );
+		$("#unidad0").select2("val", "0" );
+		$("#responsable00").select2("val", "0" );
+	}
+	
+    function detalle_movimiento(pkMovimiento,i,acciones,user, estado,dependencia,nroMemo) {
         $("#accionesk").val(acciones);
-        listar_accion();
+		$("#xnroMemo").val(nroMemo);
         listar_dependencia_m();
-		listar_estado();
         
         $('#tabla_movimiento tr').removeClass('highlighted');
         $("#filad" + pkMovimiento).addClass('highlighted');
         $("#cod_movimiento").val(pkMovimiento);
         $("#label_tramite_d").html(i);
         mostrar_botones_d();
-		
-		if(user=='<?php echo $_SESSION['usuario'];?>'){
+		if(user.toUpperCase()=='<?php echo strtoupper($_SESSION['usuario']);?>'){
         $("#boton_anular_d").show();
 		$(".btn-insertar2").show();
 		$('#form_movimiento #unidad').prop('disabled',false);$('#form_movimiento #accion').prop('disabled',false);$('#form_movimiento #prioridad').prop('disabled',false);$('#form_movimiento #fecha_vencimiento').prop('disabled',false);
-		$("#edit").val('');
+		$("#edit").val('1');
 		}
-		else if(dependencia=='<?php echo $_SESSION['pkDependencia'];?>'){
+		else if(dependencia=='<?php echo $_SESSION['pkDependencia'];?>' || ('<?php echo $_SESSION['pkDependencia'];?>'=='2' && dependencia=='9') || ('<?php echo $_SESSION['pkDependencia'];?>'=='2' && dependencia=='10')  ){
 			$("#form_movimiento #unidad").attr('disabled','disabled');
 			$("#form_movimiento #accion").attr('disabled','disabled');
 			$("#form_movimiento #prioridad").attr('disabled','disabled');
@@ -1150,10 +1343,10 @@
 		}
 		else{
 		$("#boton_anular_d").hide();
-		$(".btn-insertar2").hide();
-		$("#edit").val('');
+		//$(".btn-insertar2").hide();
+		$("#edit").val('1');
 		}
-		
+		obtener_movimiento();
     }
     
     function ocultar_botones(){
@@ -1175,7 +1368,7 @@
     
     function mostrar_botones(user){
         $("#boton_editar").show();
-		if(user=='<?php echo $_SESSION['usuario'];?>'){
+		if(user.toUpperCase()=='<?php echo strtoupper($_SESSION['usuario']);?>'){
         $("#boton_anular").show();
 		$("#btn-insertar1").show();
 		}
@@ -1191,7 +1384,7 @@
     
     function mostrar_botones0(user){
         $("#boton_editar0").show();
-        if(user=='<?php echo $_SESSION['usuario'];?>'){
+        if(user.toUpperCase()=='<?php echo $_SESSION['usuario'];?>' || user.toLowerCase()=='<?php echo $_SESSION['usuario'];?>'){
         $("#boton_anular0").show();
 		$(".btn-insertar1").show();
 		}
@@ -1244,14 +1437,17 @@
         <input type="hidden" name="mpersonak" id="mpersonak">
         <input type="hidden" name="dependenciak" id="dependenciak">
         <input type="hidden" name="personak" id="personak">
-        
+        <input type="hidden" name="xnroMemo" id="xnroMemo">
             <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4 bloqueExterno" align="right">
                 <?php if(in_array('8',$_SESSION['cOperador'])){?>  
-                <span id="boton_agregar" class="btn btn-primary" title="Agregar" style="font-size:12px;" data-toggle="modal" data-target="#registrarDocumentoModal" onclick="$('#cod_documento').val('');$('#nro_tramite').val('');$('#textAccion').html('Registrar');$('#tabla_documento tr').removeClass('highlighted');ocultar_botones();$('.btn-limpiar1').css('display','inline-block');$('#boton_agregar_d').css('display','none');$('.btn-limpiar1').click();$('.btn-limpiar2').click();$('#cuerpoMovimiento').html('<tr><td colspan=6 align=center>No se encontraron resultados</td></tr>');$('#responsables').val('');$('.btn-insertar1').show();$('#add').val('')">
+                <span id="boton_agregar" class="btn btn-primary evento_agregar" title="Agregar" style="font-size:12px;" data-toggle="modal" data-target="#registrarDocumentoModal">
+				
+
+				
                     <i  class="fa fa-plus" ></i> 
                 </span>
                 <?php } if(in_array('9',$_SESSION['cOperador'])){?>  
-                <span id="boton_editar" class="btn btn-primary" title="Modificar" style="font-size:12px" data-toggle="modal" data-target="#registrarDocumentoModal" onclick="obtener_documento();$('#add').val('')" >
+                <span id="boton_editar" class="btn btn-primary" title="Modificar" style="font-size:12px" data-toggle="modal" data-target="#registrarDocumentoModal" >
                     <i  class="fa fa-pencil" ></i> 
                 </span>
                 <?php } if(in_array('10',$_SESSION['cOperador'])){?>  
@@ -1276,19 +1472,19 @@
                     <i  class="fa fa-sitemap" ></i> 
                 </span>
                 <?php } if(in_array('35',$_SESSION['cOperador'])){?>  
-				<span id="boton_seguimiento_movimiento" class="btn btn-primary" title="Seguimiento del Movimiento" style="font-size:12px" data-toggle="modal" data-target="#movimientoModal" >
+				<span id="boton_seguimiento_movimiento" onclick="listar_documento_movimiento()" class="btn btn-primary" title="Seguimiento del Movimiento" style="font-size:12px" data-toggle="modal" data-target="#movimientoModal" >
                     <i  class="fa fa-ellipsis-h" ></i> 
                 </span>
                 <?php } ?>   
             </div>
         
             <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4 bloqueInterno" align="right">
-                <?php if(in_array('15',$_SESSION['cOperador'])){?>  
-                <span id="boton_agregar0" class="btn btn-primary" title="Agregar"   style="font-size:12px;" data-toggle="modal" data-target="#registrarDocumentoModal" onclick="$('#cod_documento').val('');$('#nro_tramite').val('');$('#textAccion').html('Registrar');$('#tabla_documento tr').removeClass('highlighted');ocultar_botones0();$('.btn-limpiar1').css('display','inline-block');$('#boton_agregar_d').css('display','none');$('#form_documento #entidad').select2('val', '1' );$('#form_documento #groupUnidad').css('display','block');$('#responsables').val('');$('.btn-insertar1').show();$('#add').val('1')">
+                <?php  if(in_array('15',$_SESSION['cOperador'])){?>  
+                <span id="boton_agregar0" class="btn btn-primary evento_agregar" title="Agregar"   style="font-size:12px;" data-toggle="modal" data-target="#registrarDocumentoModal" onclick='$("#nroDocumento").val("");$("#form_documento #asunto").val("");$("#form_documento #tipo").select2("val", "0" );'>
                     <i  class="fa fa-plus" ></i> 
                 </span>
                 <?php } if(in_array('16',$_SESSION['cOperador'])){?>  
-                <span id="boton_editar0" class="btn btn-primary" title="Modificar" style="font-size:12px" data-toggle="modal" data-target="#registrarDocumentoModal" onclick="obtener_documento();$('#add').val('')" >
+                <span id="boton_editar0" class="btn btn-primary" title="Modificar" style="font-size:12px" data-toggle="modal" data-target="#registrarDocumentoModal"  >
                     <i  class="fa fa-pencil" ></i> 
                 </span>
                 <?php } if(in_array('17',$_SESSION['cOperador'])){?>  
@@ -1309,7 +1505,7 @@
                     <i  class="fa fa-sitemap" ></i> 
                 </span>
 				<?php } if(in_array('36',$_SESSION['cOperador'])){?>  
-				<span id="boton_seguimiento_movimiento0" class="btn btn-primary" title="Seguimiento del Movimiento" style="font-size:12px" data-toggle="modal" data-target="#movimientoModal" >
+				<span id="boton_seguimiento_movimiento0" onclick="listar_documento_movimiento()" class="btn btn-primary" title="Seguimiento del Movimiento" style="font-size:12px" data-toggle="modal" data-target="#movimientoModal" >
                     <i  class="fa fa-ellipsis-h" ></i> 
                 </span>
                 <?php } ?>  
@@ -1405,10 +1601,10 @@
                         <div class="row">
                             <div class="col-xs-5 col-sm-6 col-md-8 col-lg-8"><span style="font-size:18px;font-weight:bold">Decretos</span></div>
                                 <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4" align="right">
-                                    <span id="boton_agregar_d" class="btn btn-success" title="Agregar"   style="display:none;font-size:12px" data-toggle="modal" data-target="#registrarDecretoModal" onclick="$('#cod_movimiento').val('');$('#textAccion2').html('Registrar');$('#tabla_movimiento tr').removeClass('highlighted');ocultar_botones_d();$('.btn-limpiar2').css('display','inline-block');$('#form_movimiento #estado').select2('val','62');$('.btn-insertar2').show();$('.btn-insertar2').show();$('#form_movimiento #unidad').prop('disabled',false);$('#form_movimiento #accion').prop('disabled',false);$('#form_movimiento #prioridad').prop('disabled',false);$('#form_movimiento #fecha_vencimiento').prop('disabled',false);">
+                                       <span id="boton_agregar_d" class="btn btn-success" title="Agregar"   style="display:none;font-size:12px" data-toggle="modal" data-target="#registrarDecretoModal" onclick="$('#cod_movimiento').val('');$('#textAccion2').html('Registrar');$('#tabla_movimiento tr').removeClass('highlighted');ocultar_botones_d();$('.btn-limpiar2').css('display','inline-block');limpiar2();$('.btn-insertar2').show();$('#form_movimiento #unidad').prop('disabled',false);$('#form_movimiento #accion').prop('disabled',false);$('#form_movimiento #prioridad').prop('disabled',false);$('#form_movimiento #fecha_vencimiento').prop('disabled',false);$('#form_movimiento #tipo2').select2('val', '0' );">
                                     <i  class="fa fa-plus" ></i> 
                                     </span>
-                                    <span id="boton_editar_d" class="btn btn-success" title="Modificar" style="font-size:12px;display:none" data-toggle="modal" data-target="#registrarDecretoModal" onclick="obtener_movimiento();" >
+                                    <span id="boton_editar_d" class="btn btn-success" title="Modificar" style="font-size:12px;display:none" data-toggle="modal" data-target="#registrarDecretoModal"  onclick="$('#form_movimiento #memo').val($('#xnroMemo').val())">
                                     <i  class="fa fa-pencil" ></i> 
                                     </span>
                                     <span id="boton_anular_d" class="btn btn-success" title="Anular" style="font-size:12px;display:none" data-toggle="modal" data-target="#eliminarMovimientoModal" >
@@ -1436,7 +1632,7 @@
                         </thead>
                         <tbody id="cuerpoMovimiento">
                         <tr>
-                           <td colspan=7 align=center>No se encontraron resultados</td>
+                           <td colspan='7' align=center>No se encontraron resultados</td>
                         </tr>
                         </tbody>
                     </table>		  
@@ -1482,7 +1678,7 @@
         </div>
     </div>
     <form id="form_documento">
-    <div class="modal fade" id="registrarDocumentoModal" role="dialog" aria-labelledby="Login" aria-hidden="true">
+    <div class="modal fade" id="registrarDocumentoModal" role="dialog" aria-labelledby="Login" aria-hidden="true" data-keyboard="false" data-backdrop="static">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header" >
@@ -1535,7 +1731,7 @@
                         </div>
 			<div class="col-xs-12 col-sm-6 col-md-4 col-lg-4" id="groupPersona" style="display:none">
                             <div class="form-group">
-                                <label>Persona</label>  <span data-toggle="modal" data-target="#registrarPersonaModal" style="font-size: 8px;padding-left: 3px;padding-right: 3px;padding-top: 2px;padding-bottom: 2px;display:none" id="agregar_persona" title="Agregar Persona" class="btn btn-danger btn-insertar-persona" style="font-size:12px">
+                                <label>Gerente/Jefe</label>  <span data-toggle="modal" data-target="#registrarPersonaModal" style="font-size: 8px;padding-left: 3px;padding-right: 3px;padding-top: 2px;padding-bottom: 2px;display:none" id="agregar_persona" title="Agregar Persona" class="btn btn-danger btn-insertar-persona" style="font-size:12px">
                                                         <i class="fa fa-plus"></i>
                                                         </span>
                                 <select  class="form-control select2" style="width: 100%;" name="persona" id="persona">
@@ -1549,14 +1745,13 @@
                                 <input type='text' name="nroDocumento" id="nroDocumento"  class="form-control" />
                             </div>
             </div>
-                    </div>	
-					<div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    
+                        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
                             <label class="control-label">Persona (Sistema Anterior)</label>    
                                 <input type="text" class="form-control" name="responsables" id="responsables" readonly >
                         </div>
                     </div> 
-                    <div class="row">
+                    <!--<div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <label class="control-label">Cargar Documento</label>
                             <div class="input-group">    
@@ -1569,7 +1764,7 @@
                             <input type="text" class="form-control" readonly> 
                             </div>
                         </div>
-                    </div> 
+                    </div> -->
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="form-group">
@@ -1589,13 +1784,150 @@
                             </div>
                         </div>
                     </div> 
+					
+					<span id="primerDecreto">
+					<div class="modal-header" >
+                <h1 class="modal-title" style="font-size:18px;font-weight:bold">Registrar Decreto</h1>
+                <span style="float:right;margin-top:-28px">
+                </span>
+                </div>
+					
+					
+					    <div class="row">				
+                        <div class="col-xs-12 col-sm-6 col-md-2 col-lg-3">
+                            <div class="form-group">
+                                <label>Unidad</label><br>
+                                <select onchange="listar_persona_m0();obtener_nro2();" name="unidad0" id="unidad0" class="form-control select2">
+                                </select>    
+                            </div>
+                        </div>
+						<div class="col-xs-12 col-sm-6 col-md-3 col-lg-3" >
+                            <div class="form-group">
+                                <label>Acciones</label><br>
+                                <select name="accion0" id="accion0" class="form-control select2" multiple style="height:90px" >
+                                <input type="hidden" id="acciones0" name="acciones0">
+                                </select>    
+                            </div>
+                        </div>
+						
+						                        <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2" >
+                            <div class="form-group">
+                                <label>Prioridad</label>
+                                <select onchange="calcularFecha()" name="prioridad0" id="prioridad0" class="form-control"   >
+                                    <option value="1">Alta</option>
+                                    <option value="2">Media</option>
+                                    <option value="3">Baja</option>                                    
+                                </select>   
+                            </div>
+
+                            
+                        </div>
+						
+						<div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">
+							<div class="form-group">
+                                <label>Fecha Vencimiento</label>
+                                <input type='text' name="fecha_vencimiento0" id="fecha_vencimiento0"  class="form-control" />
+                            </div>
+                            <div class="form-group" style="display:none">
+                                <label>Ampliación</label>
+                                <input type='text' name="ampliacion0" id="ampliacion0"  class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4" style="display:none">
+                            <div class="form-group">
+                                <label>Responsable</label> <span data-toggle="modal" data-target="#registrarPersona2Modal" style="font-size: 8px;padding-left: 3px;padding-right: 3px;padding-top: 2px;padding-bottom: 2px;display:none" id="agregar_persona2" title="Agregar Persona" class="btn btn-danger btn-insertar-persona2" style="font-size:12px">
+                                                        <i class="fa fa-plus"></i>
+                                                        </span>
+                                <select name="responsable00" id="responsable00" class="form-control select2">
+								<option value="0"></option>
+                                </select>   
+                            </div>
+							
+							<div class="form-group" >
+                                <label>Decreto</label>
+                                <input type='text' name="decreto0" id="decreto0"  class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">
+                            <div class="form-group">
+                                <label>Estado</label><br>
+                                <select name="estado0" id="estado0" class="form-control select2" >
+                                </select>   
+                            </div>
+                        </div>
+						<div class="col-xs-12 col-sm-6 col-md-2 col-lg-2" style="display:none">
+						<div class="form-group">
+                                <label>Tipo Documento</label>                             
+                                <select onchange="obtener_nro2()" class="form-control select2" style="width: 100%;" name="tipo0" id="tipo0">
+                                </select>
+                            </div>
+						</div>
+						
+						<div class="col-xs-12 col-sm-6 col-md-3 col-lg-3" style="display:none">
+                            <div class="form-group">
+							<!-- 0000-<?php //echo date('Y');?>-EMAPE/<?php //echo $_SESSION['sigla'];?> -->
+                                <label># Doc.</label> 
+                                <input type='text' name="memo0" id="memo0"  class="form-control" value="" >
+                            </div>
+                        </div>
+						
+                    </div>	
+                    <div class="row">
+
+						
+
+
+                  
+					<span  id="ocultoResponsable" style="display:none">
+                        <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">
+                            <label class="control-label">Responsable </label> 
+                            <input type="text" class="form-control" name="responsable0" id="responsable0" readonly >
+                        </div>
+
+                        <!--<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <label class="control-label">Cargar Documento</label>
+                            <div class="input-group">    
+                            <span class="input-group-btn">
+                                <span class="btn btn-primary btn-file">
+                                <span class="icon-span-filestyle glyphicon glyphicon-folder-open"></span>
+                                <input type="file" multiple>
+                                </span>
+                            </span>
+                            <input type="text" class="form-control" readonly> 
+                            </div>
+                        </div>-->
+						</span>
+                    </div> 
+					</span>
+					<br>
+                    <div class="row" style="display:none">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="form-group">
+                                <label>Asunto</label>
+                                <textarea name="asunto0" id="asunto0"  class="form-control" style="resize: none;" />
+                                </textarea>
+                            </div>
+                        </div>
+                    </div>                  
+                    <div class="row" style="display:none">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="form-group">
+                                <label>Área de Trabajo</label>
+                                <textarea  name="editor0" id="editor0" rows="20" cols="80" ></textarea>
+                                </textarea>
+                            </div>
+                        </div>
+                    </div>
+					
+					
                 </div>   
             </div>
         </div>
     </div>
     </form>
     <form id="form_movimiento">
-    <div class="modal fade" id="registrarDecretoModal" role="dialog" aria-labelledby="Login" aria-hidden="true">
+    <div class="modal fade" id="registrarDecretoModal" role="dialog" aria-labelledby="Login" aria-hidden="true" data-keyboard="false" data-backdrop="static">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header" >
@@ -1624,19 +1956,11 @@
                         <div class="col-xs-12 col-sm-6 col-md-2 col-lg-4">
                             <div class="form-group">
                                 <label>Unidad</label><br>
-                                <select onchange="listar_persona_m()" name="unidad" id="unidad" class="form-control select2">
+                                <select onchange="listar_persona_m();obtener_nro2();" name="unidad" id="unidad" class="form-control select2">
                                 </select>    
                             </div>
                         </div>
-                        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
-                            <div class="form-group">
-                                <label>Responsable</label> <span data-toggle="modal" data-target="#registrarPersona2Modal" style="font-size: 8px;padding-left: 3px;padding-right: 3px;padding-top: 2px;padding-bottom: 2px;display:none" id="agregar_persona2" title="Agregar Persona" class="btn btn-danger btn-insertar-persona2" style="font-size:12px">
-                                                        <i class="fa fa-plus"></i>
-                                                        </span>
-                                <select name="responsable" id="responsable" class="form-control select2">
-                                </select>   
-                            </div>
-                        </div>
+                        
                         <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">
                             <div class="form-group">
                                 <label>Estado</label><br>
@@ -1644,31 +1968,14 @@
                                 </select>   
                             </div>
                         </div>
-
-                    </div>	
-                    <div class="row">
-					<div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">
-						<div class="form-group">
-                                <label>Tipo Documento</label>                             
-                                <select onchange="obtener_nro2()" class="form-control select2" style="width: 100%;" name="tipo2" id="tipo2">
-                                </select>
-                            </div>
-						</div>
-						<div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
-                            <div class="form-group">
-							<!-- 0000-<?php //echo date('Y');?>-EMAPE/<?php //echo $_SESSION['sigla'];?> -->
-                                <label># Doc.</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="checkgg"> V°B° G.G.
-                                <input type='text' name="memo" id="memo"  class="form-control" value="" >
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3" >
-                            <div class="form-group">
-                                <label>Acciones</label><br>
-                                <select name="accion" id="accion" class="form-control select2" multiple style="height:90px" >
-                                <input type="hidden" id="acciones" name="acciones">
-                                </select>    
-                            </div>
-                        </div>
+						
+						
+						
+						
+						
+						
+											
+                    
                         <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2" >
                             <div class="form-group">
                                 <label>Prioridad</label>
@@ -1678,10 +1985,7 @@
                                     <option value="3">Baja</option>                                    
                                 </select>   
                             </div>
-                            <div class="form-group" style="display:none">
-                                <label>Decreto</label>
-                                <input type='text' name="decreto" id="decreto"  class="form-control" />
-                            </div>
+                            
                             
                         </div>
 						<div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">
@@ -1694,14 +1998,25 @@
                                 <input type='text' name="ampliacion" id="ampliacion"  class="form-control" />
                             </div>
                         </div>
-                    </div>	
-					<div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                 <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4" >
+                            <div class="form-group">
+                                <label>Acciones</label><br>
+                                <select name="accion" id="accion" class="form-control select2" multiple style="height:90px" >
+                                <input type="hidden" id="acciones" name="acciones">
+                                </select>    
+                            </div>
+                        </div>
+												<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                            <label class="control-label">Ampliación de Decreto</label> 
+                            <input type='text' name="decreto" id="decreto"  class="form-control" />
+                        </div>
+
+                        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
                             <label class="control-label">Responsable (Sistema Anterior)</label> 
                             <input type="text" class="form-control" name="responsable2" id="responsable2" readonly >
                         </div>
 
-                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                        <!--<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                             <label class="control-label">Cargar Documento</label>
                             <div class="input-group">    
                             <span class="input-group-btn">
@@ -1712,8 +2027,63 @@
                             </span>
                             <input type="text" class="form-control" readonly> 
                             </div>
-                        </div>
+                        </div>-->
                     </div> 
+					
+					<br><br>
+					<div class="row"><div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="color:red"><b>
+					(*)Solo para ser modificado por la Gerencia o Unidad de destino.</b><br><br>
+					</div>
+					</div>
+					
+					
+					
+					 <div class="row">
+				
+					
+						<div class="col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                            <div class="form-group">
+                                <label>Responsable de Atender documento
+														</label> <span data-toggle="modal" data-target="#registrarPersona2Modal" style="font-size: 8px;padding-left: 3px;padding-right: 3px;padding-top: 2px;padding-bottom: 2px;display:none" id="agregar_persona2" title="Agregar Persona" class="btn btn-danger btn-insertar-persona2" style="font-size:12px">
+                                                        <i class="fa fa-plus"></i>
+                                                        </span>
+                                <select name="responsable" id="responsable" class="form-control select2">
+                                </select>   
+                            </div>
+                        </div>
+						<div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+						<div class="form-group">
+                                <label>Tipo Documento</label>                             
+                                <select onchange="obtener_nro2()" class="form-control select2" style="width: 100%;" name="tipo2" id="tipo2">
+                                </select>
+                        </div>
+						</div>
+						<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                            <div class="form-group">
+							<!-- 0000-<?php //echo date('Y');?>-EMAPE/<?php //echo $_SESSION['sigla'];?> -->
+                                <label># Doc. de Respuesta</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="checkgg"> V°B° G.G.
+                                <input type='text' name="memo" id="memo"  class="form-control" value="" >
+                            </div>
+                        </div>
+                        
+						
+						
+						
+						
+						
+						
+						
+						<!--<div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">
+							<div class="form-group">
+                                <label>Fecha Vencimiento</label>
+                                <input type='text' name="fecha_vencimiento" id="fecha_vencimiento"  class="form-control" />
+                            </div>
+                            <div class="form-group" style="display:none">
+                                <label>Ampliación</label>
+                                <input type='text' name="ampliacion" id="ampliacion"  class="form-control" />
+                            </div>
+                        </div>-->
+                    </div>	
                     <div class="row" style="display:none">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="form-group">

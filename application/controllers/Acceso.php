@@ -32,7 +32,14 @@ class Acceso extends CI_Controller {
         $var   = $this->usuario_model->cambiarContrasena($filter,$filter_not);
 		
 		echo "1";
-    }    
+    } 
+
+	public function verificar_sesion(){
+		if(isset($_SESSION['usuario']))
+		echo "1";
+		else
+		echo "0";
+    }	
 	
     public function obtener_usuario(){ 
         $usuario=$this->input->get_post('usuario');
@@ -64,15 +71,19 @@ class Acceso extends CI_Controller {
 
             $cuenta = array(
                    'codigo'             => $acceso->pkUsuario,
+				   'codigo_persona'     => $acceso->pkPersona,
                    'usuario'            => $acceso->usuario,
                    'dni'                => $acceso->dni,
                    'nombre'             => $acceso->nombre,
                    'apellidoPaterno'    => $acceso->apellidoPaterno,
                    'apellidoMaterno'    => $acceso->apellidoMaterno,
+				   'razonSocial'    	=> $acceso->razonSocial,
                    'gerencia'           => $acceso->descripcion,
                    'sigla'              => $acceso->siglas,
                    'pkDependencia'      => $acceso->unidadu,
                    'central'            => $acceso->central,
+				   'nivel'              => $acceso->nivel,
+				   'email'              => $acceso->email,
                    'cMenu'              => $array1,
                    'cSubmenu'           => $array2,
                    'cSeccion'           => $array3,
@@ -89,19 +100,24 @@ class Acceso extends CI_Controller {
         $var   = $this->maestro_model->plantillaPermiso();
         $cadena="<ul>";
 		$var1="";$var2="";$var3="";$var4="";
+		$id1="";$id2="";$id3="";$id4="";
         $i=0;
         foreach($var as $key => $v ){
-			if($v->des3!=$var3 and $var3!=""){$cadena.="</ul>";
-				if($v->des2!=$var2){$cadena.="</li></ul>";
-					if($v->des1!=$var1){$cadena.="</li></ul>";
-				}}}
+			if($v->id3!=$id3 and $var3!=""){$cadena.="</ul>";
+				if($v->id2!=$id2){$cadena.="</li></ul>";
+					if($v->id1!=$id1){$cadena.="</li></ul>";
+					}
+				}
+			}
 							
-            if($v->des1!=$var1){$cadena.="<li><a href='#'>".$v->des1."</a><ul>";}
-			if($v->des2!=$var2){$cadena.="<li><a href='#'>".$v->des2."</a><ul>";}
-			if($v->des3!=$var3){$cadena.="<li><a href='#'>".$v->des3."</a>";$cadena.="<ul>";}
+            if($v->id1!=$id1){$cadena.="<li><a href='#'>".$v->des1."</a><ul>";}
+			if($v->id2!=$id2){$cadena.="<li><a href='#'>".$v->des2."</a><ul>";}
+			if($v->id3!=$id3){$cadena.="<li><a href='#'>".$v->des3."</a>";$cadena.="<ul>";}
+
 			$cadena.="<li><a href='#'><label><input type='checkbox' name=check class=check id=checks".$v->id4." onclick='activar(".$v->id1.",".$v->id2.",".$v->id3.",".$v->id4.")' > ".$v->des4."</label></a></li>";
 
 			$var1=$v->des1;$var2=$v->des2;$var3=$v->des3;$var4=$v->des4;
+			$id1=$v->id1;$id2=$v->id2;$id3=$v->id3;$id4=$v->id4;
             $i++;
         }
         $cadena.="</ul>";
@@ -118,6 +134,45 @@ class Acceso extends CI_Controller {
         $var   = $this->usuario_model->obtenerPermiso($filter,$filter_not);
         if(count((array)$var)>0) echo json_encode($var); else echo 0;
     }    
+	
+	public function listar_usuario_chat(){
+
+        $filter     = new stdClass();
+        $filter_not = new stdClass();
+		
+        $var   = $this->usuario_model->listarUsuarioChat();
+        if(count((array)$var)>0) echo json_encode($var); else echo 0;
+    }
+	
+	public function listar_chat(){
+		$destino=$this->input->get_post('destino');
+		
+        $filter     = new stdClass();
+        $filter_not = new stdClass();
+		
+		$filter->destino=$destino;
+        $var   = $this->usuario_model->listarChat($filter,$filter_not);
+        if(count((array)$var)>0) echo json_encode($var); else echo 0;
+    }
+	
+	public function listar_ver_msj(){
+		
+        $var   = $this->usuario_model->listarVerMsj();
+        if(count((array)$var)>0) echo json_encode($var); else echo 0;
+    }
+	
+	public function modificar_visto(){
+		$destino=$this->input->get_post('destino');
+		
+        $filter     = new stdClass();
+        $filter_not = new stdClass();
+		
+		$filter->destino=$destino;
+        $var   = $this->usuario_model->modificarVisto($filter,$filter_not);
+        
+		echo "1";
+    }
+	
 	
     public function cerrar_sesion(){
         $this->session->sess_destroy();
@@ -146,4 +201,31 @@ class Acceso extends CI_Controller {
 		echo '1';
 
 	}
+	
+	public function registrar_chat(){
+		$detalle=$this->input->get_post('detalle');
+		$destino=$this->input->get_post('destino');
+
+		$filter     = new stdClass();
+        $filter_not = new stdClass();
+		
+		$filter->detalle=$detalle;
+		$filter->destino=$destino;
+
+        $var   = $this->usuario_model->registrarChat($filter,$filter_not);
+		echo '1';
+
+	}
+	
+	public function anular_usuario(){
+		$usuario=$this->input->get_post('usuario');
+		
+        $filter     = new stdClass();
+        $filter_not = new stdClass();
+		
+		$filter->usuario=$usuario;
+        $var   = $this->usuario_model->anularUsuario($filter,$filter_not);
+        
+		echo "1";
+    }
 }

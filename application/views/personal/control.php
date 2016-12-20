@@ -56,9 +56,9 @@
             return formvalido; // retornamos segun corresponda
             }
 
-            function isValidated(val){
-            if(jQuery.trim(val).length!=0)    
-            if(jQuery.trim(val).length!=5 || jQuery.trim(val).substr(0,2)<12 || jQuery.trim(val).substr(2,1)!=":")
+            function isValidated(val){ 
+			if(jQuery.trim(val).length!=0)  
+            if(jQuery.trim(val).length!=5 ||  jQuery.trim(val).substr(2,1)!=":")
             return false;
             return true;
             }   
@@ -181,7 +181,7 @@
         var f = new Date();
         var dia, mes;
         if(f.getDate()<10) dia="0"+f.getDate(); else dia=f.getDate();
-        if(f.getMonth()<10) mes="0"+(f.getMonth()+1); else mes=(f.getMonth()+1);
+        if((f.getMonth()*1+1)<10) mes="0"+(f.getMonth()+1); else mes=(f.getMonth()+1);
        
         var fecha_def_ini= "01/"+mes+ "/" + f.getFullYear();
         var fecha_def_fin= dia+"/"+mes+ "/" + f.getFullYear();
@@ -343,7 +343,7 @@
        	<div class="col-xs-5 col-sm-6 col-md-8 col-lg-8"><span style="font-size:18px;font-weight:bold">Asistencia de Locadores </span>
         </div>
             <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4 bloqueExterno" align="right">
-                <?php if(in_array('24',$_SESSION['cOperador'])){?>  
+                <?php if(isset($_SESSION['cOperador'])){if(in_array('24',$_SESSION['cOperador'])){?>  
                 <span id="boton_registrar" class="btn btn-primary" title="Guardar"   style="font-size:12px;">
                     <i  class="fa fa-save" ></i> 
                 </span>
@@ -359,7 +359,7 @@
                 <span onclick="obtenerMesAnio()" data-toggle="modal" data-target="#cierreModal" id="boton_cerrar" class="btn btn-danger" title="Cierre"  id="Detallado" style="font-size:12px" >
                     <i class="fa fa-lock" ></i> 
                 </span>
-                <?php } ?>  
+                <?php }}  ?>  
             </div>
     </div>
 </section>

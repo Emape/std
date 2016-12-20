@@ -15,6 +15,8 @@ class maestro_model extends CI_Model{
         $this->table_6 = "cierre_asistencia";
 		$this->table_7 = "usuario";
 		$this->table_8 = "menu";
+		$this->table_9 = "categoria_juridica";
+		$this->table_10 = "actividad";
     }
     
     public function listarTipo($filter,$filter_not){
@@ -23,7 +25,7 @@ class maestro_model extends CI_Model{
         
 		if($filter->grupo=='2')
         $this->db_1->where('t.grupo=1 OR t.grupo=2');
-		else
+		else if($filter->grupo!='0')
 		$this->db_1->where('t.grupo',$filter->grupo);
 	
         $this->db_1->where('t.estado','1');
@@ -70,7 +72,7 @@ class maestro_model extends CI_Model{
     }
     
     public function listarPersona($filter,$filter_not){
-        $this->db_1->select('p.*,de.descripcion as gerencia,"" as asistio, "" as tiempo ');
+        $this->db_1->select('p.*,p.cargo,de.descripcion as gerencia,"" as asistio, "" as tiempo ');
         $this->db_1->from($this->table_4.' p');
         $this->db_1->join($this->table_3.' de','de.pkDependencia=p.pkDependencia');
         $this->db_1->where('p.pkDependencia',$filter->pkDependencia);
@@ -122,16 +124,18 @@ class maestro_model extends CI_Model{
         
         if($filter->central=="1"){
             if($filter->dependencia=='2')
-                $arrcc = array('9','10',$filter->pkDependencia);   
+                $arrcc = array('9','10','10','32','36',$filter->pkDependencia);   
             else if($filter->dependencia=='3')
                  $arrcc = array('12',$filter->pkDependencia);
             else if($filter->dependencia=='4')
-                $arrcc = array('11','13','14',$filter->pkDependencia); 
+                $arrcc = array('13','14',$filter->pkDependencia); 
             else if($filter->dependencia=='5')
-                $arrcc = array('15','16','17','18',$filter->pkDependencia); 
+                $arrcc = array($filter->pkDependencia); 
             else if($filter->dependencia=='6')
                 $arrcc = array('19','20','21','22',$filter->pkDependencia); 
-            
+            else
+                $arrcc = array($filter->pkDependencia); 
+			
             $this->db_1->where_in('p.pkDependencia',$arrcc); 
         }
         else{
@@ -158,6 +162,8 @@ class maestro_model extends CI_Model{
         $this->db_1->where('p.estado','1');
         //$this->db_1->where('p.locador','1');
 		$this->db_1->where('p.pkEmpresa','1');
+		$this->db_1->where('p.estado','1');
+		//$this->db_1->where('pe.estado','1');
         $this->db_1->order_by("de.descripcion,p.razonSocial", "asc");
         
         $query = $this->db_1->get();
@@ -335,11 +341,42 @@ class maestro_model extends CI_Model{
         $this->db_1->where('al.estado','1');
         $this->db_1->where('p.locador','1');
         $this->db_1->where('month(al.fecha)',substr($filter->fecha,5,2));
+		if($_SESSION['nivel']!='1')
         $this->db_1->where('al.pkDependencia',$filter->pkDependencia);
+	
         $this->db_1->order_by("de.descripcion,p.razonSocial", "asc");
         
         $query = $this->db_1->get();
         
+        $result = new stdclass();
+        if($query->num_rows()>0){
+        $result = $query->result();
+        }
+        return $result;
+    }
+
+	public function registrarMaestroLegal($filter,$filter_not){
+        $data =   array('estado' => '1',
+                        'descripcion' => strtoupper($filter->detalle),
+						'grupo' => $filter->grupo,
+                        );    
+        $this->db_1->insert($this->table_9, $data);      
+    }
+	
+	public function notificacionLegal(){
+        $query=$this->db_1->query("SELECT count(*) as cantidad,'a' as criterio FROM `actividad` where usuarioCreador='".$_SESSION['usuario']."' and estado='1' and fechaProgramada='".date('Y-m-d')."' UNION SELECT count(*) as cantidad,'b' as criterio FROM `actividad` where usuarioCreador='".$_SESSION['usuario']."' and estado='1' and (fechaProgramada='".date( 'Y-m-d',strtotime('+1 day',strtotime(date('Y-m-d'))))."' OR  fechaProgramada='".date( 'Y-m-d',strtotime('+2 day',strtotime(date('Y-m-d'))))."')");
+		
+        $result = new stdclass();
+        if($query->num_rows()>0){
+        $result = $query->result();
+        }
+        return $result;
+    }
+	
+		public function listarNotificacionLegal(){
+        $query=$this->db_1->query("SELECT t.descripcion as detalle_actividad,t1.descripcion as detalle_acto,actividad.* FROM `actividad` LEFT JOIN tipo as t on t.pkTipo=actividad.actividad
+LEFT JOIN tipo as t1 on t1.pkTipo=actividad.acto where usuarioCreador='".$_SESSION['usuario']."' and actividad.estado='1' and fechaProgramada='".date('Y-m-d')."' UNION SELECT t.descripcion as detalle_actividad,t1.descripcion as detalle_acto,actividad.* FROM `actividad` LEFT JOIN tipo as t on t.pkTipo=actividad.actividad
+LEFT JOIN tipo as t1 on t1.pkTipo=actividad.acto where usuarioCreador='".$_SESSION['usuario']."' and actividad.estado='1' and (fechaProgramada='".date( 'Y-m-d',strtotime('+1 day',strtotime(date('Y-m-d'))))."' OR  fechaProgramada='".date( 'Y-m-d',strtotime('+2 day',strtotime(date('Y-m-d'))))."')");
         $result = new stdclass();
         if($query->num_rows()>0){
         $result = $query->result();

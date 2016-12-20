@@ -1,3 +1,187 @@
+<script>
+$(document).ready(function(){
+//listar_usuarios_chat();	
+
+$("#input_chat").keyup(function(event){
+    if(event.keyCode == 13){
+        $("#btn-chat").click();
+		modificar_visto();
+    }
+});
+
+$("#input_chat").focus(function(){
+		modificar_visto();
+});
+
+$(".return_chat").click(function(){
+
+	document.title = " EMAPE S.A. "
+	
+	$("#contenedor_1").show();
+	$("#contenedor_2").hide();
+	
+	$("#titulo_chat_1").show();
+	$("#titulo_chat_2").hide();
+	
+	$(".panel-footer").hide();
+
+});
+});
+
+function profile_chat(conta,pkUsuario){
+	
+	//document.title = " Nuevo Mensaje (1) - EMAPE S.A. "
+	
+	$("#chat_pk_destino").val(pkUsuario);
+	
+	$("#contenedor_1").hide();
+	$("#contenedor_2").show();
+	
+	$("#titulo_chat_1").hide();
+	$("#titulo_chat_2").show();
+	
+	$(".panel-footer").show();
+	
+	$("#label_name").html($("#chat_name"+conta).val().substring(0,13)+'...');
+	modificar_visto();
+	$("#conta_chat").val(conta);
+	//listar_chat(conta);
+	
+	$(".msg_container_base").animate({ scrollTop: $('.msg_container_base').prop("scrollHeight")}, 1000);
+}
+
+function listar_usuarios_chat(){
+        $("#cuerpoUsuario").fadeIn(1000).html("<span><img src='<?php base_url();?>images/loader.gif' ></span>");
+        $.ajax({
+	url : '<?php base_url()?>Acceso/listar_usuario_chat',
+	type : 'POST',
+	success : function(result) {
+	var documento = eval(result); 
+            var html = "";
+			var conta=1;
+            $.each(documento, function () {
+				if('<?php echo $_SESSION['usuario'];?>'!=this.usuario){
+            html += "<div class='row msg_container base_receive ' onclick='profile_chat("+conta+","+this.pkUsuario+")' style='cursor:pointer'><div class='col-md-2 colchat col-xs-2 avatar'><img src='images/avatar.png' class='img-responsive img-circle'><span style='left:30px;top:23px;position:absolute;display:none' class='msj_pendiente' id='msj_pendiente"+this.pkUsuario+"' ><img src='images/audio-speaker-on.png' width='15px'></span></div><div class='col-xs-10 colchat col-md-10'><div class='messages msg_receive'>";
+            html += "<p><input type='hidden' name='chat_name' id='chat_name"+conta+"' value='"+this.razonSocial+"' >" + this.razonSocial.substring(0,25) + "</p>";
+            html += "</div></div></div>";
+
+			}
+			conta++;  
+            });
+                            
+            $("#cuerpoUsuario").html(html === "" ? " <span>No se encontraron resultados</span>" : html);
+	},
+	error : function(request, xhr, status) {
+            alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
+	},
+        });
+    
+}
+
+
+
+function listar_chat(conta){
+        $.ajax({
+	url : '<?php base_url()?>Acceso/listar_chat',
+	data :'destino='+$("#chat_pk_destino").val(),
+	type : 'POST',
+	success : function(result) {
+	var documento = eval(result); 
+            var html = "";
+			var todo = "";
+            $.each(documento, function () {
+			todo=$("#todo_chat").val();
+			if('<?php echo $_SESSION['codigo'];?>'==this.pkUsuario){
+			html +="<div class='row msg_container base_sent'><div class='col-xs-10 colchat col-md-10'><div class='messages msg_sent' style='background-color:#D8E8F2'>";
+            html +="<p>"+this.detalle+"</p>";
+            html +="<time> Yo • "+this.fechaCreada+"</time>";
+            html +="</div></div><div class='col-md-2 colchat col-xs-2 avatar'><img src='images/avatar.png' class='img-responsive img-circle'></div></div>";
+			}else{
+			html +="<div class='row msg_container base_receive' ><div class='col-md-2 colchat col-xs-2 avatar'><img src='images/avatar.png' class='img-responsive img-circle'></div><div class='col-xs-10 colchat col-md-10' ><div class='messages msg_receive' >";
+            html +="<p>"+this.detalle+"</p>";
+            html +="<time>"+$("#chat_name"+conta).val().substring(0,13)+" • "+this.fechaCreada+"</time>";
+            html +="</div></div></div>";
+			}
+            });
+			
+            $("#todo_chat").val(html);                
+            $("#cuerpoChat").html(html === "" ? " <br><span>No hay conversaciones.</span>" : html);
+			
+			if(todo!=html){
+				$(".msg_container_base").animate({ scrollTop: $('.msg_container_base').prop("scrollHeight")}, 1000);
+				if(todo!=""){
+				document.title = " Nuevo Mensaje (1) - EMAPE S.A. "
+				}
+			}
+			
+	},
+	error : function(request, xhr, status) {
+            alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
+	},
+        });
+    
+}
+
+function listar_ver_msj(){
+        $.ajax({
+	url : '<?php base_url()?>Acceso/listar_ver_msj',
+	type : 'POST',
+	success : function(result) {
+	document.title = "EMAPE S.A."
+	$(".msj_pendiente").hide();
+	var documento = eval(result); 
+            $.each(documento, function () {
+            $("#msj_pendiente"+this.pkUsuario).show();
+			if('<?php echo $_SESSION['codigo'];?>'!=this.pkUsuario){
+			document.title = " Nuevo Mensaje (1) - EMAPE S.A. ";
+			}
+            });
+			
+	},
+	error : function(request, xhr, status) {
+            alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
+	},
+        });
+    
+}
+
+function modificar_visto(){
+        $.ajax({
+	url : '<?php base_url()?>Acceso/modificar_visto',
+	data :'destino='+$("#chat_pk_destino").val(),
+	type : 'POST',
+	success : function(result) {
+	document.title = "EMAPE S.A."
+	if(result!='1')
+		alert("No se modifico");	
+	},
+	error : function(request, xhr, status) {
+            alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
+	},
+        });
+    
+}
+
+function registrar_chat(){
+	if($("#input_chat").val()!=""){
+        $.ajax({
+	url : '<?php base_url()?>Acceso/registrar_chat',
+	data :'detalle='+$("#input_chat").val()+'&destino='+$("#chat_pk_destino").val(),
+	type : 'POST',
+	success : function(result) {
+		if(result!='1'){
+			alert('No se pudo enviar conversación');
+		}           
+	},
+	error : function(request, xhr, status) {
+            alert("Error : "+status+' '+xhr.responseText+ ' - '+ request );
+	},
+        });
+    $("#input_chat").val("");
+	$(".msg_container_base").animate({ scrollTop: $('.msg_container_base').prop("scrollHeight")}, 1000);
+	}
+}
+</script>
 <style>    
 .colchat, .colchat{
     padding:0;
@@ -56,7 +240,9 @@
     color: #ccc;
 }
 .msg_container {
-    padding: 10px;
+    padding: 4px;
+	padding-left: 10px;
+	padding-right: 15px;
     overflow: hidden;
     display: flex;
 }
@@ -123,108 +309,55 @@
     bottom:0;
 }
 </style>
-<div class="content-wrapper">
+<div class="content-wrapper"><input type='hidden' name='chat_pk_destino' id='chat_pk_destino'  ><input type='hidden' name='conta_chat' id='conta_chat'  >
+<textarea id="todo_chat" style="display:none"></textarea>
 	<div id="container-ajax"></div>
-    <!--    
+    <?php if(in_array('45',$_SESSION['cOperador'])){?>
+	
         <div class="container">
-    <div class="row chat-window col-xs-5 col-md-3" id="chat_window_1" style="margin-left:10px;">
+    <div class="row chat-window col-xs-5 col-md-3" id="chat_window_1" style="margin-left:10px;width:350px">
         <div class="col-xs-12 col-md-12">
         	<div class="panel panel-default">
                 <div class="panel-heading top-bar">
-                    <div class="col-md-6 col-xs-6">
-                        <h3 class="panel-title"><span class="glyphicon glyphicon-comment"></span> Chat </h3>
+                    <div class="col-md-6 col-xs-6" style="padding-left: 0px;width:80%" >
+                        <h3 class="panel-title"><span id="titulo_chat_1" style="color:#3289C7"><img src="images/multiple-users-silhouette.png" width="22px" >&nbsp; <b>Chat</b></span>
+						<span id="titulo_chat_2" style="color:#3289C7;display:none"><img src="images/back-button.png" width="22px" style="cursor:pointer" class="return_chat" >&nbsp; <b><span id="label_name"></span></b></span>
+						
+						</h3>
                     </div>
-                    <div class="col-md-6 col-xs-6" style="text-align: right;">
-                        <a href="#"><span id="" class="fa fa-group icon_group"></span></a>
+                    <div class="col-md-6 col-xs-6" style="text-align: right;padding-right: 0px;width:20%">
+                        <!--<a href="#"><span id="" class="fa fa-group icon_group"></span></a>-->
                         <a href="#"><span id="minim_chat_window" class="glyphicon glyphicon-minus icon_minim"></span></a>
-                        <a href="#"><span class="glyphicon glyphicon-remove icon_close" data-id="chat_window_1"></span></a>
+                        <!--<a href="#"><span class="glyphicon glyphicon-remove icon_close" data-id="chat_window_1"></span></a>-->
                     </div>
                 </div>
-                <div class="panel-body msg_container_base">
-                    <span id="contenedor">
-                    <div class="row msg_container base_sent">
-                        <div class="col-xs-10 colchat col-md-10">
-                            <div class="messages msg_sent">
-                                <p>Hola que tal</p>
-                                <time datetime="2009-11-13T20:00">Anibal • 10:30</time>
-                            </div>
-                        </div>
-                        <div class="col-md-2 colchat col-xs-2 avatar">
-                            <img src="images/avatar.jpg" class=" img-responsive img-circle ">
-                        </div>
-                    </div>
-                    <div class="row msg_container base_receive">
-                        <div class="col-md-2 colchat col-xs-2 avatar">
-                            <img src="images/avatar.jpg" class=" img-responsive img-circle">
-                        </div>
-                        <div class="col-xs-10 colchat col-md-10">
-                            <div class="messages msg_receive">
-                                <p>Puedes enviarme un correo con tus observaciones.</p>
-                                <time datetime="2009-11-13T20:00">Jessica • 10:45</time>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row msg_container base_sent">
-                        <div class="col-md-10 colchat col-xs-10 ">
-                            <div class="messages msg_sent">
-                                <p>Ok un momento</p>
-                                <time datetime="2009-11-13T20:00">Anibal • 10:50</time>
-                            </div>
-                        </div>
-                        <div class="col-md-2 colchat col-xs-2 avatar">
-                            <img src="images/avatar.jpg" class=" img-responsive img-circle">
-                        </div>
-                    </div>
-                    <div class="row msg_container base_receive">
-                        <div class="col-md-2 colchat col-xs-2 avatar">
-                            <img src="images/avatar.jpg" class=" img-responsive img-circle">
-                        </div>
-                        <div class="col-xs-10 colchat col-md-10">
-                            <div class="messages msg_receive">
-                                <p>Por cierto ¡Feliz Cumpleaños!</p>
-                                <time datetime="2009-11-13T20:00">Jessica • 10:52</time>
-                            </div>
-                        </div>
-                    </div>
+                <div class="panel-body msg_container_base" style="height:300px">
+					<span id="contenedor_1"><p></p>
+					<!--<span id="titulo_chat_1" style="color:#3289C7">Conversaciones Recientes</span>-->
+					<span id="cuerpoUsuario">
+					</span>
+					<!--<span id="titulo_chat_1" style="color:#3289C7">Conversaciones Anteriores</span>-->				
                     </span>
-                    <span id="contenedor2">
-                    <div class="row msg_container base_receive">
-                        <div class="col-md-2 colchat col-xs-2 avatar">
-                            <img src="images/avatar.jpg" class=" img-responsive img-circle">
-                        </div>
-                        <div class="col-xs-10 colchat col-md-10">
-                            <div class="messages msg_receive">
-                                <p>Anibal Chamorro <span class="fa fa-circle" style="color:green" ></b></p>
-                               
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row msg_container base_receive">
-                        <div class="col-md-2 colchat col-xs-2 avatar">
-                            <img src="images/avatar.jpg" class=" img-responsive img-circle">
-                        </div>
-                        <div class="col-xs-10 colchat col-md-10">
-                            <div class="messages msg_receive">
-                                <p>Jessica Poma</p>
-                                
-                            </div>
-                        </div>
-                    </div>
+                    <span id="contenedor_2" style="display:none">
+					
+					<span id="cuerpoChat">
+					</span>
+
                     </span>
+
                 </div>
-                <div class="panel-footer">
+                <div class="panel-footer" style="display:none">
                     <div class="input-group">
-                        <input id="btn-input" type="text" class="form-control input-sm chat_input" placeholder="Escribe mensaje Aquí" />
+                        <input id="input_chat" type="text" class="form-control input-sm chat_input" placeholder="Escribe mensaje Aquí" />
                         <span class="input-group-btn">
-                        <button class="btn btn-primary btn-sm" id="btn-chat">Enviar</button>
+                        <button class="btn btn-primary btn-sm" id="btn-chat" onclick="registrar_chat()" >Enviar</button>
                         </span>
                     </div>
                 </div>
     		</div>
         </div>
     </div>
-    
-<!-- <div class="btn-group dropup">
+	<!--<div class="btn-group dropup">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
             <span class="glyphicon glyphicon-cog"></span>
             <span class="sr-only">Toggle Dropdown</span>
@@ -236,8 +369,9 @@
             <li class="divider"></li>
             <li><a href="#"><span class="glyphicon glyphicon-eye-close"></span> Invisivel</a></li>
         </ul>
-    </div>
-</div>-->
+    </div>-->
+</div>
+<?php } ?>
         
     </div>
 
